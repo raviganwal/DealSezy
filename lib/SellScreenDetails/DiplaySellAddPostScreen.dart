@@ -1,6 +1,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
@@ -12,6 +13,9 @@ import 'package:dealsezy/Components/GlobalString.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dealsezy/Model/EditPostMode.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:dealsezy/Preferences/Preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //---------------------------------------------------------------------------------------------------//
 class DiplaySellAddPostScreen extends StatefulWidget {
   static String tag = 'DiplaySellAddPostScreen';
@@ -46,26 +50,15 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   String ReciveJsonAdv_ID ='';
   String ReciveJsonCat_ID ='';
   String ReciveJsonSubCat_ID ='';
-  String ReciveUser_ID ='';
+  String JsonReciveUser_ID ='';
   String ReciveStatus ='';
   List<Posts> _list = [];
-  CarouselSlider carouselSlider;
-  int _current = 0;
-
-  List imgList = [
-    'https://gravitinfosystems.com/MDNS/uploads/biotique-apricot-body-wash-transparent-200-ml-beauty-biotique-2_480x480.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/71Hr2O6-4gL__SL1500_.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/images.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/s-l1000.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/images_(1)1.jpg'
-  ];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
-  }
+  String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
+  List dataimage;
+  var AppReciveUserID="";
+  bool _visibleEditBtn = false;
+  bool _visibleStatusCard = false;
+  bool _visibleChatBtn = false;
 //---------------------------------------------------------------------------------------------------//
   setStatus(String message) {
     setState(() {
@@ -74,7 +67,10 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   }
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvView.php';
-  fetchPost() {
+  fetchPost() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AppReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
+    // print("ReciveUserID"+ReciveUserID.toString());
     http.post(url, body: {
       "Token": GlobalString.Token,
       "Adv_ID": widget.value1.toString(),
@@ -89,7 +85,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       setState(() {
         var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-        // print("ReciveData"+data.toString());
+        print("ReciveData"+data.toString());
 
         ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
         ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
@@ -100,12 +96,12 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         ReciveFeatures = data[0]["Features"].toString();
         ReciveCondition = data[0]["Condition"].toString();
         ReciveReasonofSelling = data[0]["Reason of Selling"].toString();
-        ReciveUser_ID = data[0]["User_ID"].toString();
+        JsonReciveUser_ID = data[0]["User_ID"].toString();
         RecivePost_Time = data[0]["Post_Time"].toString();
         ReciveVisible_To = data[0]["Visible_To"].toString();
         ReciveStatus = data[0]["Publish_Status"].toString();
 
-        /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+          /* print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
            print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
            print("ReciveJsonSubCat_ID"+ReciveJsonSubCat_ID.toString());
            print("ReciveTitle"+ReciveTitle.toString());
@@ -118,12 +114,33 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
            print("RecivePost_Time"+RecivePost_Time.toString());
            print("ReciveVisible_To"+ReciveVisible_To.toString());
            print("ReciveStatus"+ReciveStatus.toString());*/
+          //print("JsonUser_ID"+JsonReciveUser_ID.toString());
+
+
       });
     }).catchError((error) {
       setStatus(error);
     });
   }
 
+ void _CheckBtnsChatEdit() {
+  // print("Function equal");
+   print("ReciveUserIDApp"+AppReciveUserID);
+   print("JsonReciveUser_ID"+JsonReciveUser_ID);
+
+    if(AppReciveUserID.toString() == JsonReciveUser_ID){
+      setState(() {
+        _visibleEditBtn = !_visibleEditBtn;
+        _visibleStatusCard = !_visibleStatusCard;
+      });
+    }else if(AppReciveUserID.toString() != JsonReciveUser_ID.toString()){
+      print("Condition Not equal");
+      setState(() {
+        _visibleChatBtn = !_visibleChatBtn;
+      });
+
+    }
+  }
   //---------------------------------------------------------------------------------------------------//
   String ImagePosturl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/ViewAdvImages.php';
   fetchImagePost() {
@@ -131,26 +148,18 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       "Token": GlobalString.Token,
       "Adv_ID":widget.value1.toString()
     }).then((resultImagePost) {
-      print("uploadEndPoint"+url.toString());
-      print("Token" + GlobalString.Token);
-      print("statusCode" + resultImagePost.statusCode.toString());
-      print("resultbody" + resultImagePost.body);
+      //print("uploadEndPoint"+url.toString());
+      //print("Token" + GlobalString.Token);
+      //print("statusCode" + resultImagePost.statusCode.toString());
+     // print("resultbody" + resultImagePost.body);
       // return result.body.toString();
       setStatus(resultImagePost.statusCode == 200 ? resultImagePost.body : errMessage);
-      var dataImagePost = json.decode(resultImagePost.body);
-      ReciveJsonStatus = dataImagePost["Status"].toString();
-      // print("ReciveJsonStatus" + ReciveJsonStatus.toString());
-
-      final extractdata = jsonDecode(resultImagePost.body);
-      dataImagePost = extractdata["data"];
-      print("ReciveData"+dataImagePost.toString());
-      //_handleReciveFalse();
       setState(() {
-        for (Map i in dataImagePost) {
-          _list.add(Posts.formJson(i));
-          // loading = false;
-        }
+        var extractdata = json.decode(resultImagePost.body);
+        dataimage = extractdata["data"];
+       // print("dataimage"+dataimage.toString());
       });
+      this._CheckBtnsChatEdit();
     }).catchError((error) {
       setStatus(error);
     });
@@ -242,109 +251,61 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
     double _width = width * 0.70;
     double height = MediaQuery.of(context).size.height;
     double _height = height * 0.85;
+//-------------------------------------------------------------------------------------------------------//
+    final EditPosttab = new Align(
+      alignment: Alignment.topRight,
+        child: new Column(
+          children: <Widget>[
+
+       Visibility(
+         visible: _visibleEditBtn,
+         child: new IconButton(
+           padding: new EdgeInsets.all(0.0),
+           icon: new Icon(
+             FontAwesomeIcons.edit,
+             color:ColorCode.TextColorCodeBlue,
+             ),
+           onPressed: () {
+             setState(() {
+               //ReciveJsonRECID =widget.value2.toString(); //if you want to assign the index somewhere to check//if you want to assign the index somewhere to check
+               // print("CatID"+widget.value2.toString());
+               print("hello"+widget.value1.toString());
+             });
+             var route = new MaterialPageRoute(
+               builder: (BuildContext context) =>
+               new EditPostImage(
+                   value1: " ${widget.value1.toString()}"),
+               );
+             Navigator.of(context).push(route);
+           },
+           ),
+
+       ),
+          ],
+        ),
+
+
+      );
+//-----------------------------------------------------------------------------------------------------------------------//
+    final ImageSlider =  new Swiper(
+      itemBuilder: (context, i){
+        //final a = _list[i];
+        return new Image.network(imageurl+dataimage[i]["ImageData"],fit: BoxFit.fill,);
+      },
+      autoplay: true,
+      itemCount: dataimage.length,
+      viewportFraction: 0.8,
+      scale: 0.85,
+      pagination: new SwiperPagination(),
+      //control: new SwiperControl(),
+      );
+//-----------------------------------------------------------------------------------------------------------------------//
     final listJson = new Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
         new SingleChildScrollView(
           child: new Column(
             children: <Widget>[
-              new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5.0,top:5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "",
-                          style: TextStyle(
-                              color:ColorCode.TextColorCodeBlue,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                          ),
-                        new GestureDetector(
-                          /* onTap: () {
-                    var route = new MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                        new Categories()
-                        );
-                    Navigator.of(context).push(route);
-                  },*/
-                          child: new IconButton(
-                            padding: new EdgeInsets.all(0.0),
-                            icon: new Icon(
-                              FontAwesomeIcons.edit,
-                              color:ColorCode.TextColorCodeBlue,
-                              ),
-                            onPressed: () {
-                              setState(() {
-                                //ReciveJsonRECID =widget.value2.toString(); //if you want to assign the index somewhere to check//if you want to assign the index somewhere to check
-                                // print("CatID"+widget.value2.toString());
-                                print("hello"+widget.value1.toString());
-                              });
-                              var route = new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                new EditPostImage(
-                                    value1: " ${widget.value1.toString()}"),
-                                );
-                              Navigator.of(context).push(route);
-                            },
-                            ),
-                          ),
-                      ],
-                      ),
-                    ),
-                ],
-                ),
-//--------------------------------------------------------------------------------------------//
-              /*new SizedBox(
-                height: 20.0,
-                ),*/
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    carouselSlider = CarouselSlider(
-                      height: 200.0,
-                      initialPage: 0,
-                      enlargeCenterPage: true,
-                      autoPlay: true,
-                      reverse: false,
-                      enableInfiniteScroll: true,
-                      autoPlayInterval: Duration(seconds: 2),
-                      autoPlayAnimationDuration: Duration(milliseconds: 2000),
-                      pauseAutoPlayOnTouch: Duration(seconds: 10),
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged: (index) {
-                        /* setState(() {
-                          _current = index;
-                        });*/
-                      },
-                      items: imgList.map((imgUrl) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                //color: Colors.green,
-                                ),
-                              child: Image.network(
-                                imgUrl,
-                                fit: BoxFit.contain,
-                                ),
-                              );
-                          },
-                          );
-                      }).toList(),
-                      ),
-
-                  ],
-                  ),
-                ),
 //------------------------------------------------------------------------------------------------------//
               new Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -382,7 +343,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                         ),
                       ),
 //-------------------------------------------------------------------------------------------------------//
-                    Card(
+                    /*Card(
                       color: Colors.white70,
                       child: ListTile(
                         title: Text(GlobalString.Time.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
@@ -396,7 +357,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                           },
                           ),
                         ),
-                      ),
+                      ),*/
 //-------------------------------------------------------------------------------------------------------//
                     Card(
                       color: Colors.white70,
@@ -462,23 +423,9 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                         ),
                       ),
 //-------------------------------------------------------------------------------------------------------//
-                    Card(
-                      color: Colors.white70,
-                      child: ListTile(
-                        title: Text(GlobalString.Visible.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
-                        subtitle: Text(
-                          ReciveVisible_To,style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                          ),
-                        leading: IconButton(
-                          icon: Icon(FontAwesomeIcons.solidEye, color: ColorCode.TextColorCodeBlue),
-                          onPressed: () {
-                            //  _launchCaller(phoneNumber);
-                          },
-                          ),
-                        ),
-                      ),
+
 //-------------------------------------------------------------------------------------------------------//
-                    Card(
+                  /*  Card(
                       color: Colors.white70,
                       child: ListTile(
                         title: Text(GlobalString.Status.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
@@ -492,7 +439,8 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                           },
                           ),
                         ),
-                      ),
+                      ),*/
+
                   ],
                   ),
                 ),
@@ -502,14 +450,38 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
 
       ],
       );
+    final Status = Padding(
+      padding: EdgeInsets.only(left: 00.0, right: 00.0),
+      child: new Column(
+        children: <Widget>[
+          Visibility(
+            visible: _visibleStatusCard,
+            child: new   Card(
+              color: Colors.white70,
+              child: ListTile(
+                title: Text(GlobalString.Status.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
+                subtitle: Text(
+                  ReciveStatus,style: TextStyle(fontSize: 13.0, color: ColorCode.AppColorCode,fontWeight: FontWeight.bold),
+                  ),
+                leading: IconButton(
+                  icon: Icon(FontAwesomeIcons.infoCircle, color: ColorCode.TextColorCodeBlue),
+                  onPressed: () {
+                    //  _launchCaller(phoneNumber);
+                  },
+                  ),
+                ),
+              ),
+
+            ),
+        ],
+        ),
+      );
 //---------------------------------------------------------------------------------------------------//
     Future<Null> BackScreen() async {
-      Navigator.of(context).pushNamed(HomeScreen.tag);
+      Navigator.of(context);
     }
 //---------------------------------------------------------------------------------------------------//
-    return new WillPopScope(
-      onWillPop: BackScreen,
-      child: Scaffold(
+    return  Scaffold(
         drawer: _drawer(),
         key: _scaffoldKey,
         appBar: new AppBar(
@@ -568,53 +540,60 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
           ),
 //---------------------------------------------------------------------------------------------------//
         backgroundColor: Colors.white,
-        body: listJson,
-        /*        bottomNavigationBar: BottomAppBar(
+        /*body: listJson,*/
+        body: new ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            EditPosttab,
+            new Container(
+              //color: Colors.grey,
+              height: 200.0, width: _width,child: ImageSlider),
+            listJson,
+            Status,
+            //listJson
+          ],
+          ),
+        bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Expanded(
+              Visibility(
+                visible: _visibleChatBtn,
                 child: Container(
-                  height: 50,
-                  color:Color(0xFF222B78),
-                  child: new FlatButton.icon(
-                    //color: Colors.red,
-                    icon: Icon(Icons.arrow_back,color: Colors.white,), //`Icon` to display
-                      label: Text('back'.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                      onPressed: () {
-                       *//* Navigator
-                            .of(context)
-                            .push(new MaterialPageRoute(builder: (_) => new Product()));*//*
-                      },
+                  color: Colors.transparent,
+                  width: MediaQuery.of(context).size.width,
+                  height:50,
+                  child: FlatButton.icon(
+                    onPressed: () {},
+                    color: ColorCode.AppColorCode,
+                    icon: Icon(FontAwesomeIcons.solidComment,color: Colors.white,), //`Icon` to display
+                    label: Text(GlobalString.Chat.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                     ),
-
-                  ),
-                flex: 2,
-                ),
-              Expanded(
+                  )
+              ),
+              /*  Expanded(
                 child: Container(
                   height: 50,
-                  color:Color(0xFFE0318C),
+                  color:ColorCode.AppColorCode,
                   child: new FlatButton.icon(
                     //color: Colors.red,
-                    icon: Icon(Icons.add_shopping_cart,color: Colors.white,), //`Icon` to display
-                      label: Text('add to cart'.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+                    icon: Icon(FontAwesomeIcons.trash,color: Colors.white,), //`Icon` to display
+                      label: Text(GlobalString.DeleteImage.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                       onPressed: () {
-                       *//* GetCountRequest(); //fun1
+                        *//* GetCountRequest(); //fun1
                         _ackAlert(); //fun2*//*
                       },
                     ),
 
                   ),
                 flex: 3,
-                ),
+                ),*/
             ],
             ),
-          ),*/
-        ),
-      );
+          ),
+        );
   }
 //---------------------------------------------------------------------------------------------------//
   Widget _drawer() {

@@ -34,6 +34,7 @@ dependencies:
   url_launcher: ^4.1.0
   flutter_swiper: ^1.1.6
   carousel_pro: ^1.0.0
+  cached_network_image: ^1.1.2+1
 
 
 dev_dependencies:
