@@ -142,10 +142,10 @@ class ExploreScreenState extends State<ExploreScreen>{
     http.post(url, body: {
       "Token": GlobalString.Token
     }).then((result) {
-       print("uploadEndPoint"+url.toString());
-      print("Token" + GlobalString.Token);
+      // print("uploadEndPoint"+url.toString());
+     // print("Token" + GlobalString.Token);
       //print("statusCode" + result.statusCode.toString());
-      print("resultbody" + result.body);
+      //print("resultbody" + result.body);
       //return result.body.toString();
       setStatus(result.statusCode == 200 ? result.body : errMessage);
       var dataCategory = json.decode(result.body);
@@ -154,7 +154,7 @@ class ExploreScreenState extends State<ExploreScreen>{
 
       final extractdata = jsonDecode(result.body);
       dataCategory = extractdata["data"];
-      print("ReciveData"+data.toString());
+     // print("ReciveData"+data.toString());
       // _handleSubmitted();
       setState(() {
         for (Map i in dataCategory) {
