@@ -91,18 +91,18 @@ class _MyAppState extends State<SellAddPostScreen> {
     }).then((result) {
       print("User_ID"+ReciveUserID.toString());
       print("Visible_To"+Visible_ToController.text.toString());
-      // print("uploadEndPoint"+url.toString());
-    //  print("Title"+TitleController.text.toString());
-    //  print( "Description"+ DescriptionController.text.toString());
-     // print( "Features"+ FeaturesController.text.toString());
-     // print( "Condition"+ ConditionController.text.toString());
+      print("uploadEndPoint"+url.toString());
+      print("Title"+TitleController.text.toString());
+      print( "Description"+ DescriptionController.text.toString());
+      print( "Features"+ FeaturesController.text.toString());
+      print( "Condition"+ ConditionController.text.toString());
        print("Reason_of_selling "+ ReasonofSellingController.text.toString());
-     // print( "Price"+ PriceController.text.toString());
-      //print( "CAT_ID"+ widget.value2.toString());
-      //print( "SubCat_ID"+ widget.value1.toString());
-      //print("Token" + GlobalString.Token);
-      //print("Visible_To" + "");
-      //print("statusCode" + result.statusCode.toString());
+      print( "Price"+ PriceController.text.toString());
+      print( "CAT_ID"+ widget.value2.toString());
+      print( "SubCat_ID"+ widget.value1.toString());
+      print("Token" + GlobalString.Token);
+      print("Visible_To" +Visible_ToController.text.toString());
+      print("statusCode" + result.statusCode.toString());
         print("resultbody" + result.body);
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//

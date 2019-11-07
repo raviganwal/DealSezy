@@ -24,12 +24,12 @@ class SplashScreenState extends State<SplashScreen>
   /*AnimationController animationController;
   Animation<double> animation;*/
   void handleTimeout() async {
-    print("hello");
+    //print("hello");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //print("KEY_UserID"+prefs.getString(Preferences.KEY_UserID.toString()));
     if (prefs.getString(Preferences.KEY_UserStatus) != null) {
       if (prefs.getString(Preferences.KEY_UserStatus) == 'Active') {
-        print("Preferences.KEY_UserID"+Preferences.KEY_UserStatus);
+       // print("Preferences.KEY_UserID"+Preferences.KEY_UserStatus);
         Navigator.of(context).pushNamed(HomeScreen.tag);
       }
     } else {

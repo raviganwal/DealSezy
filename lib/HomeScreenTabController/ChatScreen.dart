@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
+import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -247,7 +249,7 @@ class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.About.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(AboutUsScreen.tag);
               },
               ),
             Divider(
@@ -262,7 +264,7 @@ class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.Terms.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(TermAndCondition.tag);
               },
               ),
             Divider(

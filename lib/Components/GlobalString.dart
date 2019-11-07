@@ -81,5 +81,9 @@ class GlobalString {
   static String ProfileUpdate="Profile Update";
   static String UpdateProfileBtn="Update Profile";
   static String Chat="Chat Now";
+  static String EditPodt="Edit Post";
+  static String PodtEdit="Post Edit";
+  static String AboutUs="Abou Us";
+  static String TermAndCondition="Term And Condition";
 
 }

@@ -45,6 +45,10 @@ class _MyAppState extends State<LoginScreen> {
   var ReciveUserStatus="";
   var ReciveUserID="";
   var data;
+  var ReciveUserFirstName ="";
+  var ReciveUserLastName ="";
+  var ReciveUserEmail ="";
+  var ReciveUserFullName ="";
 //---------------------------------------------------------------------------------------------------//
   /*Future<Null> BackScreen() async {
     Navigator.of(context).pushNamed(LoginScreen.tag);
@@ -255,37 +259,6 @@ class _MyAppState extends State<LoginScreen> {
         ),
       );
   }
-//----------------------------------------------------------------------------------------------//
-/*  Widget signUpButtonRow() {
-    return     new RaisedButton(
-      color: ColorCode.AppColorCode,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      textColor: Colors.white,
-      padding: EdgeInsets.all(0.0),
-      onPressed: () => Navigator.of(context).pushNamed(SignUpScreen.tag),
-      child: Container(
-        alignment: Alignment.center,
-//        height: _height / 20,
-        width:_large? _width/4 : (_medium? _width/3.75: _width/3.5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          gradient: LinearGradient(
-            colors: <Color>[ColorCode.AppColorCode,ColorCode.AppColorCode],
-            ),
-          ),
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          GlobalString.Signup, style: TextStyle(color:ColorCode.TextColorCode,fontSize: _large? 14: (_medium? 12: 10)),),
-        ),
-      );
-  }*/
-  void  _displaySnackbar(BuildContext context) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-        duration: Duration(minutes: 2),
-        content: Text('Please Wait........')
-        ));
-  }
 //-----------------------------------------------------------------------------------------------------------------------------------------//
   String validateEmail(String value) {
     String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -303,24 +276,26 @@ class _MyAppState extends State<LoginScreen> {
   GetLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
-    print("ReciveUserID"+prefs.getString(Preferences.KEY_UserID).toString());
+    ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
+    ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
+    //print("ReciveUserFullName"+prefs.getString(Preferences.KEY_FullName).toString());
     http.post(url, body: {
       "Email": SignupEmailController.text,
       "Password": SignupPasswordController.text,
       "Token": GlobalString.Token
     }).then((result) {
-      // print("uploadEndPoint"+url.toString());
-      /*print("FirstName" + SignupEmailController.text);
-      print("LastName" +   SignupPasswordController.text);
-      print("Token" + GlobalString.Token);
-      print("statusCode" + result.statusCode.toString());
-      print("resultbody" + result.body);*/
+      //print("uploadEndPoint"+url.toString());
+      //print("FirstName" + SignupEmailController.text);
+      //print("LastName" +   SignupPasswordController.text);
+      //print("Token" + GlobalString.Token);
+      //print("statusCode" + result.statusCode.toString());
+      //print("resultbody" + result.body);
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(result.statusCode == 200 ? result.body : errMessage);
        data = json.decode(result.body);
 
-      print("ReciveData"+data.toString());
+      //print("ReciveData"+data.toString());
 
 
       ReciveJsonStatus = data["Status"].toString();
@@ -328,8 +303,19 @@ class _MyAppState extends State<LoginScreen> {
 
       ReciveUserStatus =data["JSONDATA"]["Status"].toString();
       ReciveUserID =data["JSONDATA"]["USER_ID"].toString();
-      print("ReciveUserStatus" + ReciveUserStatus.toString());
-      print("ReciveUserID" + ReciveUserID.toString());
+
+      ReciveUserFirstName =data["JSONDATA"]["First Name"].toString();
+      ReciveUserLastName =data["JSONDATA"]["Last Name"].toString();
+      ReciveUserFullName =data["JSONDATA"]["First Name"].toString()+ " "+data["JSONDATA"]["Last Name"].toString();
+      ReciveUserEmail =data["JSONDATA"]["Email"].toString();
+
+
+  /*    print("ReciveUserStatus" + ReciveUserStatus.toString());
+      print("ReciveUserID" + ReciveUserID.toString());*/
+     /* print("ReciveUserFirstName" + ReciveUserFirstName.toString());
+      print("ReciveUserLastName" + ReciveUserLastName.toString());
+      print("ReciveUserEmail" + ReciveUserEmail.toString());
+      print("ReciveUserFullName" + ReciveUserFullName.toString());*/
 
       _handleSubmitted();
 
@@ -340,10 +326,10 @@ class _MyAppState extends State<LoginScreen> {
 //------------------------------------------------------------------------------------------------------------//
   void _handleSubmitted() {
     if(ReciveJsonStatus == "true"){
-      print("kk"+ReciveJsonStatus);
+      //print("kk"+ReciveJsonStatus);
       if(ReciveUserStatus == 'Active'){
         new Preferences().storeDataAtLogin(data);
-        print("jjj"+ReciveJsonMSG);
+        //print("jjj"+ReciveJsonMSG);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -365,7 +351,6 @@ class _MyAppState extends State<LoginScreen> {
       print("sendToServerSignupEmail"+SignupEmailController.text);
       print("sendToServerSignupPassword"+SignupPasswordController.text);*/
       GetLogin();
-      _displaySnackbar(context);
     } else {
       // validation error
       setState(() {

@@ -12,20 +12,17 @@ import 'package:dealsezy/Preferences/Preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 //----------------------------------------------------------------------------------------------//
-class ProfileUpdate extends StatefulWidget {
-  static String tag = 'ProfileUpdate';
+class EditPost extends StatefulWidget {
+  static String tag = 'EditPost';
   final String value;
-  ProfileUpdate({Key key, this.value}) : super(key: key);
+  EditPost({Key key, this.value}) : super(key: key);
   @override
-  ProfileUpdateState createState() => new ProfileUpdateState();
+  EditPostState createState() => new EditPostState();
 }
 //----------------------------------------------------------------------------------------------//
-class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderStateMixin{
+class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
   TextEditingController controller1 = new TextEditingController();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var data;
   var loading = false;
   String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
@@ -33,74 +30,88 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   var ReciveUserID="";
   String errMessage = 'Error Send Data';
   String status = '';
-  String ReciveJsonStatus ='';
-  String ReciveJsonUSER_ID ='';
-  String ReciveJsonUSERFirstName ='';
-  String ReciveJsonUSERLastName ='';
-  String ReciveJsonUSEREmail ='';
-  String ReciveJsonUSERMobile ='';
-  String ReciveJsonUSEROrganization ='';
-  String ReciveJsonUSERStatus='';
-  bool dialog = false;
-  File _image;
 
-  TextEditingController FirstNameController = new TextEditingController();
-  TextEditingController LastNameController = new TextEditingController();
-  TextEditingController EmailController = new TextEditingController();
-  TextEditingController MobileController = new TextEditingController();
-  TextEditingController OrganizationController = new TextEditingController();
+  String ReciveTitle ='';
+  String RecivePrice ='';
+  String ReciveDescription ='';
+  String ReciveFeatures ='';
+  String ReciveCondition ='';
+  String ReciveReasonofSelling ='';
+  String RecivePost_Time ='';
+  String ReciveVisible_To ='';
+  String ReciveJsonAdv_ID ='';
+  String ReciveJsonCat_ID ='';
+  String ReciveJsonSubCat_ID ='';
+  String JsonReciveUser_ID ='';
+  String ReciveStatus ='';
+  String AppReciveUserID="";
+  var ReciveJsonStatus ='';
 
-  final FocusNode myFocusNodeFirstName = FocusNode();
-  final FocusNode myFocusNodeLastName = FocusNode();
-  final FocusNode myFocusNodeEmail = FocusNode();
-  final FocusNode myFocusNodeMobile = FocusNode();
-  final FocusNode myFocusNodeOrganization = FocusNode();
+  TextEditingController TitleController = new TextEditingController();
+  TextEditingController PriceController = new TextEditingController();
+  TextEditingController DescriptionController = new TextEditingController();
+  TextEditingController FeaturesController = new TextEditingController();
+  TextEditingController ConditionController = new TextEditingController();
+  TextEditingController ReasonController = new TextEditingController();
 
-//----------------------------------------------------------------------------------------------//
-  String UpdateProfileurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/MyProfile.php';
-  fetchMyProfileUpdate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
-    http.post(UpdateProfileurl, body: {
+  final FocusNode myFocusNodeTitle = FocusNode();
+  final FocusNode myFocusNodePrice = FocusNode();
+  final FocusNode myFocusNodeDescription = FocusNode();
+  final FocusNode myFocusNodeFeatures = FocusNode();
+  final FocusNode myFocusNodeCondition = FocusNode();
+  final FocusNode myFocusNodeReason = FocusNode();
+
+//---------------------------------------------------------------------------------------------------//
+  String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvView.php';
+
+  fetchPostEdit() async {
+    http.post(url, body: {
       "Token": GlobalString.Token,
-      "User_ID": ReciveUserID.toString()
-    }).then((resultUpdateProfile) {
-     /* print("uploadEndPoint"+UpdateProfileurl.toString());
-      print("Token" + GlobalString.Token);
-      print("statusCode" + resultUpdateProfile.statusCode.toString());*/
-      // print("resultbody" + resultMyProfile.body);
+      "Adv_ID": widget.value.toString(),
+    }).then((result) {
+      // print("uploadEndPoint"+url.toString());
+      //print("Token" + GlobalString.Token);
+      //print("DisplayAdv_ID" + widget.value1.toString());
+      //  print("statusCode" + result.statusCode.toString());
+      //  print("resultbody" + result.body);
       //return result.body.toString();
-      setStatus(resultUpdateProfile.statusCode == 200 ? resultUpdateProfile.body : errMessage);
+      setStatus(result.statusCode == 200 ? result.body : errMessage);
       setState(() {
-        var extractdata = json.decode(resultUpdateProfile.body);
+        var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-       // print("ReciveData"+data.toString());
+        // print("ReciveData"+data.toString());
 
-        ReciveJsonUSER_ID = data[0]["USER_ID"].toString();
-        ReciveJsonUSERFirstName = data[0]["First Name"].toString();
-        ReciveJsonUSERLastName = data[0]["Last Name"].toString();
-        ReciveJsonUSEREmail = data[0]["Email"].toString();
-        ReciveJsonUSERMobile = data[0]["Mobile"].toString();
-        ReciveJsonUSEROrganization = data[0]["Organization"].toString();
-        ReciveJsonUSERStatus = data[0]["Status"].toString();
+        ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
+        ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
+        ReciveJsonSubCat_ID = data[0]["SubCat_ID"].toString();
+        ReciveTitle = data[0]["Title"].toString();
+        RecivePrice = data[0]["Price"].toString();
+        ReciveDescription = data[0]["Description"].toString();
+        ReciveFeatures = data[0]["Features"].toString();
+        ReciveCondition = data[0]["Condition"].toString();
+        ReciveReasonofSelling = data[0]["Reason of Selling"].toString();
+        JsonReciveUser_ID = data[0]["User_ID"].toString();
+        RecivePost_Time = data[0]["Post_Time"].toString();
+        ReciveVisible_To = data[0]["Visible_To"].toString();
+        ReciveStatus = data[0]["Publish_Status"].toString();
 
-           /*print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
-           print("ReciveJsonUSERFirstName"+ReciveJsonUSERFirstName.toString());
-           print("ReciveJsonUSERLastName"+ReciveJsonUSERLastName.toString());
-           print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
-           print("ReciveJsonUSERMobile"+ReciveJsonUSERMobile.toString());
-           print("ReciveJsonUSEROrganization"+ReciveJsonUSEROrganization.toString());
-           print("ReciveJsonUSERStatus"+ReciveJsonUSERStatus.toString());*/
+           /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+           print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
+           print("ReciveJsonSubCat_ID"+ReciveJsonSubCat_ID.toString());
+           print("ReciveTitle"+ReciveTitle.toString());
+           print("RecivePrice"+RecivePrice.toString());
+           print("ReciveDescription"+ReciveDescription.toString());
+           print("ReciveFeatures"+ReciveFeatures.toString());
+           print("ReciveCondition"+ReciveCondition.toString());
+           print("ReciveReasonofSelling"+ReciveReasonofSelling.toString());
+           print("ReciveUser_ID"+JsonReciveUser_ID.toString());
+           print("RecivePost_Time"+RecivePost_Time.toString());
+           print("ReciveVisible_To"+ReciveVisible_To.toString());
+           print("ReciveStatus"+ReciveStatus.toString());*/
       });
-
     }).catchError((error) {
       setStatus(error);
     });
-  }
-  //-------------------------------------------------------------------------------------------//
-  @override
-  void dispose() {
-    super.dispose();
   }
   //---------------------------------------------------------------------------------------------------//
   setStatus(String message) {
@@ -109,33 +120,37 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
     });
   }
 //---------------------------------------------------------------------------------------------------//
-  String Upadteurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/ProfileUpdate.php';
-  uploadProfileUpadte() async {
+  String UpdatePostEdit ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvUpdate.php';
+  EditPostUpadte() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
-    http.post(Upadteurl, body: {
+    http.post(UpdatePostEdit, body: {
       "Token": GlobalString.Token,
-      "User_ID": ReciveUserID.toString(),
-      "FirstName": FirstNameController.text.toString(),
-      "LastName": LastNameController.text.toString(),
-      "Mobile": MobileController.text.toString(),
-      "Organization": OrganizationController.text.toString(),
+      "Adv_ID": widget.value.toString(),
+      "Title": TitleController.text.toString(),
+      "Price": PriceController.text.toString(),
+      "Description": DescriptionController.text.toString(),
+      "Features": FeaturesController.text.toString(),
+      "Condition": ConditionController.text.toString(),
+      "Reason": ReasonController.text.toString(),
     }).then((resultUpadte) {
-      /*print("URL"+Upadteurl.toString());
+      /*print("URL"+UpdatePostEdit.toString());
       print("Token"+GlobalString.Token);
-      print("User_ID"+ReciveUserID.toString());
-      print("FirstName"+FirstNameController.text.toString());
-      print("LastName" + LastNameController.text.toString());
-      print("Mobile" + MobileController.text.toString());
-      print("Organization" + OrganizationController.text.toString());
+      print("Adv_ID"+widget.value.toString());
+      print("Title"+TitleController.text.toString());
+      print("Price" +PriceController.text.toString());
+      print("Description" +DescriptionController.text.toString());
+      print("Features" +FeaturesController.text.toString());
+      print("Condition" +ConditionController.text.toString());
+      print("Reason" +ReasonController.text.toString());
       print("statusCode" + resultUpadte.statusCode.toString());
       print("resultbody" + resultUpadte.body);*/
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(resultUpadte.statusCode == 200 ? resultUpadte.body : errMessage);
       var data = json.decode(resultUpadte.body);
-      ReciveJsonStatus = data["status"].toString();
-     // print("status" + ReciveJsonStatus.toString());
+      ReciveJsonStatus = data["STATUS"].toString();
+      //print("STATUS" + ReciveJsonStatus.toString());
 
       _handleSubmitted();
 
@@ -192,7 +207,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("Profile has benn Update Successfully".toString(),
+                Text("Post has benn Update Successfully".toString(),
                        textAlign: TextAlign.center,
                        style: new TextStyle(fontSize: 12.0,
                                                 color: ColorCode.TextColorCodeBlue,
@@ -227,81 +242,63 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       },
       );
   }
-  //-------------------------------------------------------------------------------------------//
-  Future getImageFromCam() async { // for camera
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _image = image;
-      print("getImageFromCam"+_image.toString());
-    });
+  //----------------------------------------------------------------------------------------------------------//
+  void _checkInternetConnectivity() async {
+    var result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) {
+      _showDialog(
+          'No internet',
+          "You're not connected to a network"
+          );
+    } /*else if (result == ConnectivityResult.mobile) {
+      _showDialog(
+          'Internet access',
+          "You're connected over mobile data"
+          );
+    } else if (result == ConnectivityResult.wifi) {
+      _showDialog(
+          'Internet access',
+          "You're connected over wifi"
+          );
+    }*/
   }
-//-------------------------------------------------------------------------------------------//
-  Future getImageFromGallery() async {// for gallery
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-      print("getImageFromGallery"+_image.toString());
-    });
-  }
-//------------------------------------------------------------------------------------------------------------//
-  void _showDialog(BuildContext context) {
-    setState(() {
-      dialog = true;
-    });
-
-    showDialog(
+  //--------------------------------------------------------------------------------------------------------//
+  Future<void> _showDialog(title, text) async {
+    return showDialog<void>(
       context: context,
-      barrierDismissible: false,
-      child: new Dialog(
-
-        child: new Container(
-          height: 125.0,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.camera,color:ColorCode.TextColorCodeBlue),
-                  GestureDetector(
-                    onTap: () {getImageFromCam();},
-                    child: Container(
-                      padding: EdgeInsets.only(left:20.0),
-                      child: Text(GlobalString.Camera.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                      ),
-                    ),
-                ],
-                ),
-              new SizedBox(
-                //height: 20.0,
-                ),
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.photo,color:ColorCode.TextColorCodeBlue),
-                  GestureDetector(
-                    onTap: () {getImageFromGallery();},
-                    child: Container(
-                      padding: EdgeInsets.only(left:20.0),
-                      child: Text(GlobalString.Gallary.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                      ),
-                    ),
-                ],
-                ),
-            ],
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Internet Warning", textAlign: TextAlign.center,
+                        style: new TextStyle(fontSize: 15.0,
+                                                 color: ColorCode.TextColorCodeBlue,
+                                                 fontWeight: FontWeight.bold),),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(title.toString(),
+                       textAlign: TextAlign.center,
+                       style: new TextStyle(fontSize: 12.0,
+                                                color: ColorCode.TextColorCodeBlue,
+                                                fontWeight: FontWeight.bold),),
+              ],
+              ),
             ),
-          ),
-        ),
-      ).then((_) {
-      if (mounted) {
-        setState(() {
-          dialog = false; // dialog was closed
-        });
-      }
-    });
-
-    new Future.delayed(const Duration(seconds: 5), () {
-      // When task is over, close the dialog
-      Navigator.of(context, rootNavigator: false).pop();
-    });
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                //("hello123"+id.toString());
+                Navigator.of(context).pop();
+              },
+              child: Text('Ok', style: new TextStyle(fontSize: 15.0,
+                                                         color: ColorCode.TextColorCodeBlue,
+                                                         fontWeight: FontWeight
+                                                             .bold),),
+              ),
+          ],
+          );
+      },
+      );
   }
 //------------------------------------------------------------------------------------------------------------//
   void _handleSubmitted() {
@@ -313,12 +310,11 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       print("True");
     }
   }
-
-
   @override
   void initState() {
+    this._checkInternetConnectivity();
     super.initState();
-    this.fetchMyProfileUpdate();
+    this.fetchPostEdit();
   }
 //----------------------------------------------------------------------------------------------//
   @override
@@ -326,55 +322,6 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
 
-    final ProfileImage = new Container(
-      height: 200.0,
-      color: Colors.white,
-      child: new Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Stack(fit: StackFit.loose, children: <Widget>[
-              new Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Container(
-                    color: Colors.grey[200],
-                    width: 140.0,
-                    height: 140.0,
-                    child: Center(
-                      child: _image == null
-                          ? Text('No image selected.')
-                          : Image.file(_image),
-
-                      ),
-                    ),
-                ],
-                ),
-              Padding(
-                  padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new CircleAvatar(
-                        backgroundColor: ColorCode.AppColorCode,
-                        radius: 25.0,
-                        child: new IconButton(
-                          icon: Icon(Icons.camera_alt),
-                          color: Colors.white,
-                          onPressed: () {
-                            print("Camera Start");
-                            _showDialog(context);
-                          },
-                          ),
-                        )
-                    ],
-                    )),
-            ]),
-            )
-        ],
-        ),
-      );
 
     final ProfileData = new Padding(
       padding: const EdgeInsets.only(top: 10.0),
@@ -388,6 +335,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+//------------------------------------------------------------------------------------------//
                   Padding(
                       padding: EdgeInsets.only(
                           left: 15.0, right: 15.0, top: 15.0),
@@ -399,7 +347,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'First Name*',
+                                'Title'.toUpperCase(),
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -416,10 +364,10 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                         children: <Widget>[
                           new Flexible(
                             child: new TextFormField(
-                              controller: FirstNameController,
-                              focusNode: myFocusNodeFirstName,
+                              controller: TitleController,
+                              focusNode: myFocusNodeTitle,
                               decoration: InputDecoration(
-                                hintText: ReciveJsonUSERFirstName,
+                                hintText: ReciveTitle.toString(),
                                 fillColor:ColorCode.TextColorCodeBlue,
                                 hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
                                 suffixIcon: IconButton(
@@ -438,108 +386,6 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             ),
                         ],
                         )),
- //----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Last Name*',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: LastNameController,
-                              focusNode: myFocusNodeLastName,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSERLastName,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.solidUser,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-/*                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Email*',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: EmailController,
-                              focusNode: myFocusNodeEmail,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSEREmail,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    Icons.mail,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),*/
 //----------------------------------------------------------------------------------------------------------------//
                   Padding(
                       padding: EdgeInsets.only(
@@ -552,7 +398,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Mobile Number*',
+                                'Price'.toUpperCase(),
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -569,11 +415,11 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                         children: <Widget>[
                           new Flexible(
                             child: new TextFormField(
-                              controller: MobileController,
-                              focusNode: myFocusNodeMobile,
                               keyboardType: TextInputType.number,
+                              controller: PriceController,
+                              focusNode: myFocusNodePrice,
                               decoration: InputDecoration(
-                                hintText: ReciveJsonUSERMobile,
+                                hintText: RecivePrice.toString(),
                                 fillColor:ColorCode.TextColorCodeBlue,
                                 hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
                                 suffixIcon: IconButton(
@@ -581,7 +427,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                                     // _controller.clear();
                                   },
                                   icon: Icon(
-                                    FontAwesomeIcons.phone,
+                                    FontAwesomeIcons.rupeeSign,
                                     color: ColorCode.TextColorCodeBlue,
                                     ),
                                   ),
@@ -604,7 +450,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Organization*',
+                                'Description'.toUpperCase(),
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -621,10 +467,112 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                         children: <Widget>[
                           new Flexible(
                             child: new TextFormField(
-                              controller: OrganizationController,
-                              focusNode: myFocusNodeOrganization,
+                              controller:DescriptionController,
+                              focusNode: myFocusNodeDescription,
                               decoration: InputDecoration(
-                                hintText: ReciveJsonUSEROrganization,
+                                hintText: ReciveDescription.toString(),
+                                fillColor:ColorCode.TextColorCodeBlue,
+                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
+                                suffixIcon: IconButton(
+                                  onPressed: (){
+                                    // _controller.clear();
+                                  },
+                                  icon: Icon(
+                                    FontAwesomeIcons.info,
+                                    color: ColorCode.TextColorCodeBlue,
+                                    ),
+                                  ),
+                                ),
+                              //enabled: !_status,
+                              //autofocus: !_status,
+                              ),
+                            ),
+                        ],
+                        )),
+//----------------------------------------------------------------------------------------------------------------//
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 15.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Feature'.toUpperCase(),
+                                style: TextStyle(
+                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
+                                    letterSpacing: 1.3),
+                                ),
+                            ],
+                            ),
+                        ],
+                        )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 5.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Flexible(
+                            child: new TextFormField(
+                              controller: FeaturesController,
+                              focusNode: myFocusNodeFeatures,
+                              decoration: InputDecoration(
+                                hintText:ReciveFeatures.toString(),
+                                fillColor:ColorCode.TextColorCodeBlue,
+                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
+                                suffixIcon: IconButton(
+                                  onPressed: (){
+                                    // _controller.clear();
+                                  },
+                                  icon: Icon(
+                                    FontAwesomeIcons.solidQuestionCircle,
+                                    color: ColorCode.TextColorCodeBlue,
+                                    ),
+                                  ),
+                                ),
+                              //enabled: !_status,
+                              //autofocus: !_status,
+                              ),
+                            ),
+                        ],
+                        )),
+//----------------------------------------------------------------------------------------------------------------//
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 15.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Condition'.toUpperCase(),
+                                style: TextStyle(
+                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
+                                    letterSpacing: 1.3),
+                                ),
+                            ],
+                            ),
+                        ],
+                        )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 5.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Flexible(
+                            child: new TextFormField(
+                              controller: ConditionController,
+                              focusNode: myFocusNodeCondition,
+                              decoration: InputDecoration(
+                                hintText: ReciveCondition.toString(),
                                 fillColor:ColorCode.TextColorCodeBlue,
                                 hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
                                 suffixIcon: IconButton(
@@ -643,6 +591,58 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             ),
                         ],
                         )),
+//------------------------------------------------------------------------------------------//
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 15.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Reason of selling'.toUpperCase(),
+                                style: TextStyle(
+                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
+                                    letterSpacing: 1.3),
+                                ),
+                            ],
+                            ),
+                        ],
+                        )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, right: 15.0, top: 5.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Flexible(
+                            child: new TextFormField(
+                              controller: ReasonController,
+                              focusNode: myFocusNodeReason,
+                              decoration: InputDecoration(
+                                hintText: ReciveReasonofSelling.toString(),
+                                fillColor:ColorCode.TextColorCodeBlue,
+                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
+                                suffixIcon: IconButton(
+                                  onPressed: (){
+                                    // _controller.clear();
+                                  },
+                                  icon: Icon(
+                                    FontAwesomeIcons.shopware,
+                                    color: ColorCode.TextColorCodeBlue,
+                                    ),
+                                  ),
+                                ),
+                              //enabled: !_status,
+                              //autofocus: !_status,
+                              ),
+                            ),
+                        ],
+                        )),
+//------------------------------------------------------------------------------------------//
                 ],
                 ),
               ),
@@ -652,30 +652,29 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       );
 //---------------------------------------------------------------------------------------------//
     return Scaffold(
-        appBar: new AppBar(
-          title: Text(GlobalString.ProfileUpdate.toUpperCase(),style: TextStyle(
-              fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),),
-          iconTheme: new IconThemeData(color: Colors.white),
-          centerTitle: true,
-          actions: <Widget>[
-            new IconButton(
-              padding: new EdgeInsets.all(15.0),
-              icon: new Icon(
-                Icons.notifications,
-                color: Colors.white,
-                ),
-              onPressed: null,
+      appBar: new AppBar(
+        title: Text(GlobalString.PodtEdit.toUpperCase(),style: TextStyle(
+            fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),),
+        iconTheme: new IconThemeData(color: Colors.white),
+        centerTitle: true,
+        actions: <Widget>[
+          new IconButton(
+            padding: new EdgeInsets.all(15.0),
+            icon: new Icon(
+              Icons.notifications,
+              color: Colors.white,
               ),
-          ],
-          ),
-        // backgroundColor:ColorCode.AppColorCode,
-        body: new ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            ProfileImage,
-            ProfileData,
-          ],
-          ),
+            onPressed: null,
+            ),
+        ],
+        ),
+      // backgroundColor:ColorCode.AppColorCode,
+      body: new ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          ProfileData,
+        ],
+        ),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -688,14 +687,10 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                 color:ColorCode.AppColorCode,
                 child: new FlatButton.icon(
                   //color: Colors.red,
-                  icon: Icon(FontAwesomeIcons.fileExport,color: Colors.white,), //`Icon` to display
-                    label: Text(GlobalString.UpdateProfileBtn.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                   onPressed: () {
-                      /*setState(() {
-                        uploadProfileUpadte();
-                      });*/
-                     uploadProfileUpadte();
-
+                  icon: Icon(FontAwesomeIcons.solidEdit,color: Colors.white,), //`Icon` to display
+                    label: Text(GlobalString.PodtEdit.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+                    onPressed: () {
+                      EditPostUpadte();
                     },
                   ),
 
@@ -705,7 +700,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
           ],
           ),
         ),
-        );
+      );
   }
 }
 

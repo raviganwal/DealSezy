@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dealsezy/ProfileUpdate/ProfileUpdate.dart';
+import 'package:dealsezy/SplashScreen/SplashScreen.dart';
+import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/GlobalString.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dealsezy/Preferences/Preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,19 +45,23 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
   String ReciveJsonUSERProfilePIC='';
   String ReciveJsonUSERStatus='';
   String ReciveJsonUSERFullName='';
+  var ReciveUserEmail='';
+  var ReciveUserFullName='';
 //----------------------------------------------------------------------------------------------//
   String MyProfileurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/MyProfile.php';
   fetchMyProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
+    ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
     http.post(MyProfileurl, body: {
       "Token": GlobalString.Token,
       "User_ID": ReciveUserID.toString()
     }).then((resultMyProfile) {
-      print("uploadEndPoint"+MyProfileurl.toString());
-      print("Token" + GlobalString.Token);
-      print("User_ID" +  ReciveUserID.toString());
-      print("statusCode" + resultMyProfile.statusCode.toString());
+      //print("uploadEndPoint"+MyProfileurl.toString());
+      //print("Token" + GlobalString.Token);
+      //print("User_ID" +  ReciveUserID.toString());
+      //print("statusCode" + resultMyProfile.statusCode.toString());
      // print("resultbody" + resultMyProfile.body);
       //return result.body.toString();
       setStatus(resultMyProfile.statusCode == 200 ? resultMyProfile.body : errMessage);
@@ -91,12 +97,13 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
       setStatus(error);
     });
   }
-  //---------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------//
   setStatus(String message) {
     setState(() {
       status = message;
     });
   }
+//---------------------------------------------------------------------------------------------------//
   @override
   void initState() {
     super.initState();
@@ -107,7 +114,7 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
-
+//---------------------------------------------------------------------------------------------------//
     final ProfileImagetab = new  Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: new Stack(fit: StackFit.loose, children: <Widget>[
@@ -138,24 +145,9 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
 
                            ),
                        ),
-      /*  Padding(
-            padding: EdgeInsets.only(top: 90.0, right: 100.0),
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new CircleAvatar(
-                  backgroundColor: ColorCode.TextColorCodeBlue,
-                  radius: 25.0,
-                  child: new Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    ),
-                  )
-              ],
-              )),*/
       ]),
       );
-
+//---------------------------------------------------------------------------------------------------//
     final ProfileData = new Padding(
       padding: const EdgeInsets.all(5.0),
       child: Column(
@@ -258,16 +250,6 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
         ],
         ),
       );
-    /*final Register = Center(
-    //  padding: EdgeInsets.only(left: 80.0, right: 80.0,top: 5.0),
-        child: FlatButton.icon(  color: ColorCode.TextColorCodeBlue,
-          icon: Icon(null), //`Icon` to display
-          label: Text(GlobalString.FormSubmit.toUpperCase(),style: TextStyle(
-              fontSize: 19.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),), //`Text` to display
-          //onPressed: _askUser,
-          ),
-
-      );*/
 //---------------------------------------------------------------------------------------------//
     return new WillPopScope(
       onWillPop: () async {
@@ -312,13 +294,13 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
           children: <Widget>[
             UserAccountsDrawerHeader(
 
-              accountName: Text("Mr. "+"Akash Gupta".toUpperCase(),style: TextStyle(
+              accountName: Text("Mr. "+ReciveUserFullName.toUpperCase(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
                   backgroundColor: Colors.transparent,
                   fontWeight: FontWeight.bold),),
-              accountEmail: Text("gupta.akash555@gmail.com",style: TextStyle(
+              accountEmail: Text(ReciveUserEmail,style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
@@ -386,7 +368,7 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
                 ),
               title: Text(GlobalString.About.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(AboutUsScreen.tag);
               },
               ),
             Divider(
@@ -401,7 +383,7 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
                 ),
               title: Text(GlobalString.Terms.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(TermAndCondition.tag);
               },
               ),
             Divider(
@@ -416,7 +398,7 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
                 ),
               title: Text(GlobalString.logout.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                //Navigator.of(context).pushNamed(Help.tag);
+                TapMessage(context, "Logout!");
               },
               ),
             Divider(
@@ -425,6 +407,26 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
           ],
           ));
   }
+  //---------------------------------------------------------------------------------------------------//
+  void TapMessage(BuildContext context, String message) {
+    var alert = new AlertDialog(
+      title: new Text('Want to logout?'),
+      content: new Text(message),
+      actions: <Widget>[
+        new FlatButton(
+            onPressed: () {
+              removeData(context);
+            },
+            child: new Text('OK'))
+      ],
+      );
+    showDialog(context: context, child: alert);
+  }
+//---------------------------------------------------------------------------------------------------//
+  removeData(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(Preferences.KEY_UserStatus);
+    Navigator.of(context).pushNamed(SplashScreen.tag);
+  }
 }
-
 //----------------------------------------------------------------------------------------------//

@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/SellScreenDetails/DiplaySellAddPostScreen.dart';
+import 'package:dealsezy/SplashScreen/SplashScreen.dart';
+import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +25,7 @@ class MyAdv extends StatefulWidget {
   @override
   _MyAdvState createState() => new _MyAdvState();
 }
-
+//-------------------------------------------------------------------------------------------------//
 class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
   TabController tabController;
   String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
@@ -38,10 +41,14 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
   String ReciveJsonMSG ='';
   String ReciveJsonRECID ='';
   String ReciveAdv_ID ='';
+  var ReciveUserEmail ='';
+  var ReciveUserFullName ='';
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/MyADV.php';
   fetchMyAdv() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
+    ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
     http.post(url, body: {
       "Token": GlobalString.Token,
@@ -81,7 +88,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
       fetchMyAdv();
     }
   }
-  //---------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------//
   void _checkInternetConnectivity() async {
     var result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.none) {
@@ -301,111 +308,15 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
                                         color: ColorCode.TextColorCodeBlue,
                                         ),
                                                ),
-
-                                      /*new Text(a.id.toString(), style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                        color:Color(0xFF222B78),
-                                        ),
-                                               ),*/
                                       SizedBox(
                                         width: 5,
                                         ),
-                                      /*Icon(
-                                        FontAwesomeIcons.trash,
-                                        size: 18,
-                                        color:Color(0xFFE0318C),
-                                        ),*/
                                     ],
                                     ),
-                             /*     SizedBox(
-                                    height: 5,
-                                    ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Text(
-                                          "",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                            color:Color(0xFF222B78),
-                                            ),
-                                          ),
-                                        ),
-
-                                      *//*Container(
-                                        color:Color(0xFFE0318C),
-                                        child: IconButton(
-                                          icon: Icon(Icons.remove,color: Colors.white,),
-                                          *//**//*onPressed: () {
-                                            setState(() {
-
-                                              CardItemId = (data[i][
-                                              "Id"]);
-                                              //if you want to assign the index somewhere to check
-                                              //print("OnTapProductId"+GlobalProductId.toString());
-                                            });
-                                            RemoveProductCount();
-                                            _RemoveProductItemAlert();
-                                            //print("hello");
-                                            // model.removeProduct(model.cart[index]);
-                                          },*//**//*
-                                          ),
-                                        ),*//*
-                                      *//*Container(
-                                        color:Color(0xFFE0318C),
-                                        child: IconButton(
-                                          icon: Icon(Icons.add,color: Colors.white,),
-                                         *//**//* onPressed: () {
-                                            setState(() {
-
-                                              GlobalProductId = (data[i][
-                                              "product_id"]);
-                                              //if you want to assign the index somewhere to check
-                                              print("OnTapProductId"+GlobalProductId.toString());
-                                            });
-                                            AddProductCount();
-                                            _AddProductItemAlert();
-                                            //print("hello");
-                                            // model.removeProduct(model.cart[index]);
-                                          },*//**//*
-                                          ),
-                                        ),*//*
-                                     *//* Container(
-                                        color:Color(0xFFE0318C),
-                                        child: IconButton(
-                                          icon: Icon(Icons.delete,color: Colors.white,),
-                                          *//**//*onPressed: () {
-                                            setState(() {
-
-                                              GlobalProductId = (data[i][
-                                              "product_id"]);
-                                              //if you want to assign the index somewhere to check
-                                              //print("OnTapProductId"+GlobalProductId.toString());
-                                            });
-                                            DeleteProductItem();
-                                            _DeleteProductItemAlert();
-                                            //print("hello");
-                                            // model.removeProduct(model.cart[index]);
-                                          },*//**//*
-                                          ),
-                                        ),*//*
-                                      *//*SizedBox(
-                                        width: 5,
-                                        ),*//*
-                                      *//*Icon(
-                                        FontAwesomeIcons.trash,
-                                        size: 18,
-                                        color:Color(0xFFE0318C),
-                                        ),*//*
-                                    ],
-                                    ),*/
                                 ],
                                 ),
                               ),
                             ),
-
                         ],
                         ),
                       ),
@@ -418,6 +329,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
         ],
         ),
       );
+//-------------------------------------------------------------------------------------------------//
     return Scaffold(
         drawer: _drawer(),
         appBar: AppBar(
@@ -469,7 +381,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
          body: listJson,
         );
   }
-  //-------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------//
   Widget _drawer() {
     return new Drawer(
         elevation: 20.0,
@@ -477,14 +389,13 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-
-              accountName: Text("Mr. "+"Akash Gupta".toUpperCase(),style: TextStyle(
+              accountName: Text("Mr. "+ReciveUserFullName.toUpperCase(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
                   backgroundColor: Colors.transparent,
                   fontWeight: FontWeight.bold),),
-              accountEmail: Text("gupta.akash555@gmail.com",style: TextStyle(
+              accountEmail: Text(ReciveUserEmail,style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
@@ -552,7 +463,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.About.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(AboutUsScreen.tag);
               },
               ),
             Divider(
@@ -567,7 +478,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.Terms.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(TermAndCondition.tag);
               },
               ),
             Divider(
@@ -582,7 +493,7 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.logout.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                //Navigator.of(context).pushNamed(Help.tag);
+                TapMessage(context, "Logout!");
               },
               ),
             Divider(
@@ -590,5 +501,26 @@ class _MyAdvState extends State<MyAdv> with TickerProviderStateMixin {
               ),
           ],
           ));
+  }
+//---------------------------------------------------------------------------------------------------//
+  void TapMessage(BuildContext context, String message) {
+    var alert = new AlertDialog(
+      title: new Text('Want to logout?'),
+      content: new Text(message),
+      actions: <Widget>[
+        new FlatButton(
+            onPressed: () {
+              removeData(context);
+            },
+            child: new Text('OK'))
+      ],
+      );
+    showDialog(context: context, child: alert);
+  }
+//---------------------------------------------------------------------------------------------------//
+  removeData(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(Preferences.KEY_UserStatus);
+    Navigator.of(context).pushNamed(SplashScreen.tag);
   }
 }

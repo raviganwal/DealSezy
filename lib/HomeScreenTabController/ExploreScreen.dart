@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/CategoriesScreen/Categories.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dealsezy/HomeScreenSubCategory/HomeScreenSubCategory.dart';
+import 'package:dealsezy/SeeAllScreenTag/SeeAllScreen.dart';
 import 'package:dealsezy/SellScreenDetails/DiplaySellAddPostScreen.dart';
 import 'package:dealsezy/SplashScreen/SplashScreen.dart';
 import 'package:dealsezy/SubCategoryScreen/SubCategoryItem.dart';
+import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
@@ -97,12 +100,16 @@ class ExploreScreenState extends State<ExploreScreen>{
   String ReciveJsonStatus ='';
   String Cat_ID ='';
   var ReciveUserID="";
+  var ReciveUserEmail="";
+  var ReciveUserFullName="";
   String ReciveAdv_ID ='';
 //---------------------------------------------------------------------------------------------------//
   String resultMyAdvurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/HomePageAdv.php';
   fetchMyAdv() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
+    ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
+    ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
     http.post(resultMyAdvurl, body: {
       "Token": GlobalString.Token,
       "User_ID": ReciveUserID.toString()
@@ -162,11 +169,11 @@ class ExploreScreenState extends State<ExploreScreen>{
           // loading = false;
         }
       });
-
     }).catchError((error) {
       setStatus(error);
     });
   }
+//----------------------------------------------------------------------------------------------//
   void _handleSubmitted() {
     //print("hellooo");
     if(ReciveJsonStatus == "true"){
@@ -310,7 +317,7 @@ class ExploreScreenState extends State<ExploreScreen>{
                   onTap: () {
                   var route = new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                      new Categories()
+                      new SeeAllScreen()
                   );
                   Navigator.of(context).push(route);
                 },
@@ -516,222 +523,6 @@ class ExploreScreenState extends State<ExploreScreen>{
       );
   }
 //-------------------------------------------------------------------------------------------//
-  Widget _buildContainerPROPERTIES() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.PROPERTIES.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-         /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.building,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerCARS() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.CARS.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.car,
-                          size: 30.0,color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerFURNITURE() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.FURNITURE.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.couch,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerJOBS() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.JOBS.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.userMd,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerELECTRONICS() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.ELECTRONICS.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.chargingStation,
-                          size: 30.0,color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerMOBILES() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.MOBILES.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.mobileAlt,
-                          size: 30.0,color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerBIKES() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.BIKE.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.biking,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerBOOKS() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.BOOKS.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.book,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-//-------------------------------------------------------------------------------------------//
-  Widget _buildContainerFASHION() {
-    return  Container(
-      padding: const EdgeInsets.all(0.0),
-      child: Center(
-        child: GridTile(
-          footer: Text(
-            GlobalString.FASHION.toUpperCase(),
-            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                           fontSize: 9,
-                                                           letterSpacing: 0.27,),
-            ),
-          /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-          child: Icon(FontAwesomeIcons.tshirt,
-                          size: 30.0, color:ColorCode.TextColorCodeBlue,),
-          ),
-        ),
-      //color: Colors.blue[400],
-      margin: EdgeInsets.all(1.0),
-      );
-  }
-  //--------------------------------------------------------------------------------------------------------//
   Widget _drawer() {
     return new Drawer(
         elevation: 20.0,
@@ -740,13 +531,13 @@ class ExploreScreenState extends State<ExploreScreen>{
           children: <Widget>[
             UserAccountsDrawerHeader(
 
-              accountName: Text("Mr. "+"Akash Gupta".toUpperCase(),style: TextStyle(
+              accountName: Text("Mr. "+ReciveUserFullName.toUpperCase(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
                   backgroundColor: Colors.transparent,
                   fontWeight: FontWeight.bold),),
-              accountEmail: Text("gupta.akash555@gmail.com",style: TextStyle(
+              accountEmail: Text(ReciveUserEmail.toString(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
@@ -814,7 +605,7 @@ class ExploreScreenState extends State<ExploreScreen>{
                 ),
               title: Text(GlobalString.About.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                 Navigator.of(context).pushNamed(AboutUsScreen.tag);
               },
               ),
             Divider(
@@ -829,7 +620,7 @@ class ExploreScreenState extends State<ExploreScreen>{
                 ),
               title: Text(GlobalString.Terms.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                // Navigator.of(context).pushNamed(CategoryScreenList.tag);
+                Navigator.of(context).pushNamed(TermAndCondition.tag);
               },
               ),
             Divider(
@@ -874,408 +665,4 @@ removeData(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
    prefs.remove(Preferences.KEY_UserStatus);
   Navigator.of(context).pushNamed(SplashScreen.tag);
-}
-//----------------------------------------------------------------------------------------------//
-class ExploreScreenDetails extends StatelessWidget {
-  ExploreScreenDetails(this.data);
-  final data;
-  String imageurl = 'https://gravitinfosystems.com/MDNS/uploads/';
-  CarouselSlider carouselSlider;
-  int _current = 0;
-
-  List imgList = [
-    'https://gravitinfosystems.com/MDNS/uploads/biotique-apricot-body-wash-transparent-200-ml-beauty-biotique-2_480x480.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/71Hr2O6-4gL__SL1500_.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/images.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/s-l1000.jpg',
-    'https://gravitinfosystems.com/MDNS/uploads/images_(1)1.jpg'
-  ];
-
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
-  }
-  @override
-  Widget build(BuildContext context) => new Scaffold(
-
-    backgroundColor: ColorCode.TextColorCode,
-    /*appBar: new AppBar(
-      iconTheme: new IconThemeData(color: Colors.white),
-      title: new Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: new Container(
-          color: Colors.transparent,
-          child: Text(
-              "Add cart".toUpperCase()),
-          ),
-        ),
-      centerTitle: true,
-      actions: <Widget>[
-        new Stack(
-          children: <Widget>[
-            new IconButton(
-              icon: new Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-                ),
-              onPressed: null,
-              ),
-            new Positioned(
-                child: new Stack(
-                  children: <Widget>[
-                    new Icon(Icons.brightness_1,
-                                 size: 20.0, color: Colors.grey),
-                    new Positioned(
-                        top: 5.0,
-                        right: 6,
-                        child: new Center(
-                          child: new Text(
-                            '10',
-                            style: new TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w500),
-                            ),
-                          )),
-                  ],
-                  )),
-          ],
-          ),
-      ],
-      ),*/
-
-    body: new Stack(
-      alignment: Alignment.topCenter,
-      children: <Widget>[
-        new SingleChildScrollView(
-          child: new Column(
-            children: <Widget>[
-              SizedBox(height: 15.0),
-              new Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 0.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          new GestureDetector(
-                            onTap: () {
-                              var route = new MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  new HomeScreen()
-                                  );
-                              Navigator.of(context).push(route);
-                            },
-                            child: new Icon(
-                              Icons.arrow_back,color: ColorCode.TextColorCodeBlue,
-                              //size: 15.0,
-                              ),
-                            ),
-                          new Stack(
-                            children: <Widget>[
-                              new IconButton(
-                                padding: new EdgeInsets.only(left:18.0),
-                                icon: new Icon(
-                                  Icons.shopping_cart,
-                                  color: ColorCode.TextColorCodeBlue,
-                                  ),
-                                onPressed: () {
-                                  //print("hello"+id.toString());
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen(
-                                          /*  value: Userid.toString(),*/
-                                          )),
-                                    );
-                                },
-                                ),
-                              new Positioned(
-                                  child: new Stack(
-                                    children: <Widget>[
-                                      new Icon(null),
-                                      new Positioned(
-                                          left:16.0,
-                                          top: 3.0,
-                                          //right: 5,
-                                          child: new Center(
-                                            child: new Text(
-                                              "9",
-                                              style: new TextStyle(
-                                                  color: ColorCode.TextColorCodeBlue,
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold),
-                                              ),
-                                            )),
-                                    ],
-                                    )),
-                            ],
-                            ),
-                        ],
-                        ),
-                      ),
-                  ],
-                  ),
-                ),
-              //SizedBox(height: 50.0),
-              /* Container(
-                margin: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.contain,
-                    image: NetworkImage(imageurl+data["image"],),
-                    ),
-                  ),
-                ),*/
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    carouselSlider = CarouselSlider(
-                      height: 250.0,
-                      initialPage: 0,
-                      enlargeCenterPage: true,
-                      autoPlay: true,
-                      reverse: false,
-                      enableInfiniteScroll: true,
-                      autoPlayInterval: Duration(seconds: 2),
-                      autoPlayAnimationDuration: Duration(milliseconds: 2000),
-                      pauseAutoPlayOnTouch: Duration(seconds: 10),
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged: (index) {
-                        /* setState(() {
-                          _current = index;
-                        });*/
-                      },
-                      items: imgList.map((imgUrl) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
-                              decoration: BoxDecoration(
-                                //color: Colors.green,
-                                ),
-                              child: Image.network(
-                                imgUrl,
-                                fit: BoxFit.contain,
-                                ),
-                              );
-                          },
-                          );
-                      }).toList(),
-                      ),
-                    /* SizedBox(
-                      height: 20,
-                      ),*/
-                    /* Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: map<Widget>(imgList, (index, url) {
-                        return Container(
-                          width: 10.0,
-                          height: 10.0,
-                          margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _current == index ? ColorCode.AppColorCode : Colors.green,
-                            ),
-                          );
-                      }),
-                      ),*/
-                  ],
-                  ),
-                ),
-              new Card(
-                child: new Container(
-                  /* width: screenSize.width,*/
-                  margin: new EdgeInsets.all(10.0),
-                    child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new SizedBox(
-                          height: 1.0,
-                          ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    new Text(
-                                      /*"${widget.itemRating}",*/
-                                      data["categoryname"].toUpperCase(),
-                                        style: new TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                                      ),
-                                    new Text(
-                                      /*"${widget.itemRating}",*/
-                                      " > "+data["subcategoryname"].toUpperCase(),
-                                        style: new TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                                      ),
-
-                                  ],
-                                  ),
-                              ],
-                              ),
-
-                          ],
-                          ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    new Text(
-                                      /*"${widget.itemRating}",*/
-                                      "Rs."+data["MRP"],
-                                        style: new TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,decoration: TextDecoration.lineThrough,),
-                                      ),
-                                    new Text(
-                                      /*"${widget.itemRating}",*/
-                                      " Rs."+data["SellingPrice"],
-                                        style: new TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                                      ),
-
-                                  ],
-                                  ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      child: new CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        child: Image.asset('assets/images/discount.png'),
-                                        ),
-                                      margin: const EdgeInsets.all(2.0),
-                                      width: 15.0,
-                                      height: 15.0,
-                                      ),
-                                    Container(
-                                      child: new Text(data["Discount"],style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
-                                      margin: const EdgeInsets.all(0.0),
-                                      width: 15.0,
-                                      height: 15.0,
-                                      ),
-                                  ],
-                                  )
-                              ],
-                              ),
-
-                          ],
-                          ),
-
-                        new SizedBox(
-                          height: 2.0,
-                          ),
-                        new Text(
-                          data["product_name"].toUpperCase(),textAlign: TextAlign.left,
-                          style:
-                          TextStyle(fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
-                          ),
-                        /* new SizedBox(
-                        height: 0.0,
-                      ),*/
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                new Text(
-                                  /*"${widget.itemRating}",*/
-                                  data["product_number"].toUpperCase(),
-                                    style: new TextStyle(fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
-                                  )
-                              ],
-                              ),
-                          ],
-                          ),
-                      ],
-                      ),
-                  ),
-                ),
-              new Container(
-                margin: EdgeInsets.all(0),
-                //height: 120,
-                child: Card(
-                  //color: Colors.grey,
-                  child: new Column(
-                    children: <Widget>[
-                      new ListTile(
-                        title: new Text(
-                          "Description  ",textAlign: TextAlign.start,
-                          style: new TextStyle(fontSize: 18.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                          ),
-                        subtitle: new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new SizedBox(
-                                height: 1.0,
-                                ),
-                              new Text(data["description"].toUpperCase(),
-                                           style: new TextStyle(
-                                               fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300)),
-                              /* new Text('Price: ${data["Price"]}',
-                                style: new TextStyle(
-                                    fontSize: 11.0, fontWeight: FontWeight.normal,color: Palette.greenLandLight)),*/
-                            ]),
-                        )
-                    ],
-                    ),
-                  ),
-                ),
-              new Container(
-                margin: EdgeInsets.all(0),
-                //height: 120,
-                child: Card(
-                  //color: Colors.grey,
-                  child: new Column(
-                    children: <Widget>[
-                      new ListTile(
-                        title: new Text(
-                          "How To Use  ",textAlign: TextAlign.start,
-                          style: new TextStyle(fontSize: 18.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
-                          ),
-                        subtitle: new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new SizedBox(
-                                height: 1.0,
-                                ),
-                              new Text(data["how_to_use"].toUpperCase(),
-                                           style: new TextStyle(
-                                               fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300)),
-                              /* new Text('Price: ${data["Price"]}',
-                                style: new TextStyle(
-                                    fontSize: 11.0, fontWeight: FontWeight.normal,color: Palette.greenLandLight)),*/
-                            ]),
-                        )
-                    ],
-                    ),
-                  ),
-                ),
-            ],
-            ),
-          )
-
-      ],
-      ),
-    );
 }

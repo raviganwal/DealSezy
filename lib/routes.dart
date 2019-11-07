@@ -1,6 +1,8 @@
+import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/CategoriesScreen/Categories.dart';
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
 import 'package:dealsezy/EditPostImageScreen/ImageUpload.dart';
+import 'package:dealsezy/EditPostScreen/EditPost.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/HomeScreenSubCategory/HomeScreenPost.dart';
 import 'package:dealsezy/HomeScreenSubCategory/HomeScreenSubCategory.dart';
@@ -11,6 +13,7 @@ import 'package:dealsezy/HomeScreenTabController/MyAdv.dart';
 import 'package:dealsezy/HomeScreenTabController/SellScreen.dart';
 import 'package:dealsezy/LoginScreen/LoginScreen.dart';
 import 'package:dealsezy/ProfileUpdate/ProfileUpdate.dart';
+import 'package:dealsezy/SeeAllScreenTag/SeeAllScreen.dart';
 import 'package:dealsezy/SellScreenDetails/DiplaySellAddPostScreen.dart';
 import 'package:dealsezy/SellScreenDetails/SellAddPostScreen.dart';
 import 'package:dealsezy/SignUpScreen/Email.dart';
@@ -19,6 +22,7 @@ import 'package:dealsezy/SignUpScreen/Organization.dart';
 import 'package:dealsezy/SignUpScreen/SetUpPassword.dart';
 import 'package:dealsezy/SignUpScreen/SignUpScreen.dart';
 import 'package:dealsezy/SubCategoryScreen/SubCategoryItem.dart';
+import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
 import 'package:flutter/material.dart';
 import 'package:dealsezy/SplashScreen/SplashScreen.dart';
 
@@ -46,5 +50,9 @@ final routes = {
   ImageUpload.tag: (context) => ImageUpload(),
   ProfileUpdate.tag: (context) => ProfileUpdate(),
   HomeScreenSubCategory.tag: (context) => HomeScreenSubCategory(),
-  HomeScreenPost.tag: (context) => HomeScreenPost()
+  HomeScreenPost.tag: (context) => HomeScreenPost(),
+  EditPost.tag: (context) => EditPost(),
+  SeeAllScreen.tag: (context) => SeeAllScreen(),
+  AboutUsScreen.tag: (context) => AboutUsScreen(),
+  TermAndCondition.tag: (context) => TermAndCondition()
 };

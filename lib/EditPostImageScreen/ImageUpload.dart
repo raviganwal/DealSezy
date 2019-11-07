@@ -334,26 +334,6 @@ class _ImageUploadState extends State<ImageUpload> {
             new SizedBox(
               height: 10.0,
               ),
-           /* Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FlatButton.icon(
-                  color:ColorCode.AppColorCode,
-                  icon: Icon(FontAwesomeIcons.camera,color: Colors.white,), //`Icon` to display
-                  label: Text("Camera".toUpperCase().toString(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                  onPressed: getImageFromCam,
-                  ),
-
-                FlatButton.icon(
-                  color:ColorCode.AppColorCode,
-                  icon: Icon( FontAwesomeIcons.cameraRetro,
-                                size: 18,
-                                color: Colors.white,), //`Icon` to display
-                  label: Text('gallery'.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                  onPressed: getImageFromGallery,
-                  ),
-              ],
-              ),*/
           ],
           ),
         bottomNavigationBar: BottomAppBar(

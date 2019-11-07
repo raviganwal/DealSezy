@@ -5,6 +5,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/GlobalString.dart';
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
+import 'package:dealsezy/EditPostScreen/EditPost.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/Model/SliderImageImageModel.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   String status = '';
   String errMessage = 'Error Send Data';
   String ReciveJsonStatus ='';
-  String Cat_ID ='';
+  String SendReciveJsonAdv_ID ='';
   var loading = false;
   String ReciveTitle ='';
   String RecivePrice ='';
@@ -52,6 +53,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   bool _visibleEditBtn = false;
   bool _visibleStatusCard = false;
   bool _visibleChatBtn = false;
+  bool _visibleEditPostBtn = false;
   List<Data> _list = [];
   int _current = 0;
   List<Data> imgList = List();
@@ -89,7 +91,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       setState(() {
         var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-        // print("ReciveData"+data.toString());
+         //print("ReciveData"+data.toString());
 
         ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
         ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
@@ -99,13 +101,13 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         ReciveDescription = data[0]["Description"].toString();
         ReciveFeatures = data[0]["Features"].toString();
         ReciveCondition = data[0]["Condition"].toString();
-        ReciveReasonofSelling = data[0]["Reason of Selling"].toString();
+        ReciveReasonofSelling = data[0]["Reason_of_Selling"].toString();
         JsonReciveUser_ID = data[0]["User_ID"].toString();
         RecivePost_Time = data[0]["Post_Time"].toString();
         ReciveVisible_To = data[0]["Visible_To"].toString();
         ReciveStatus = data[0]["Publish_Status"].toString();
 
-        /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+           /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
            print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
            print("ReciveJsonSubCat_ID"+ReciveJsonSubCat_ID.toString());
            print("ReciveTitle"+ReciveTitle.toString());
@@ -114,7 +116,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
            print("ReciveFeatures"+ReciveFeatures.toString());
            print("ReciveCondition"+ReciveCondition.toString());
            print("ReciveReasonofSelling"+ReciveReasonofSelling.toString());
-           print("ReciveUser_ID"+ReciveUser_ID.toString());
+           print("JsonReciveUser_ID"+JsonReciveUser_ID.toString());
            print("RecivePost_Time"+RecivePost_Time.toString());
            print("ReciveVisible_To"+ReciveVisible_To.toString());
            print("ReciveStatus"+ReciveStatus.toString());*/
@@ -133,10 +135,10 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       "Token": GlobalString.Token,
       "Adv_ID":widget.value1.toString()
     }).then((resultImagePost) {
-      print("uploadEndPoint" + url.toString());
-      print("Token" + GlobalString.Token);
-      print("statusCode" + resultImagePost.statusCode.toString());
-      print("resultbody" + resultImagePost.body);
+      //print("uploadEndPoint" + url.toString());
+      //print("Token" + GlobalString.Token);
+      //print("statusCode" + resultImagePost.statusCode.toString());
+      //print("resultbody" + resultImagePost.body);
       // return result.body.toString();
       setStatus(resultImagePost.statusCode == 200 ? resultImagePost.body : errMessage);
       var dataImagePost = json.decode(resultImagePost.body);
@@ -147,7 +149,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
 
       final extractdata = jsonDecode(resultImagePost.body);
       dataImagePost = extractdata["data"];
-      print("ReciveData" + dataImagePost.toString());
+      //print("ReciveData" + dataImagePost.toString());
 
       //_handleReciveFalse();
       setState(() {
@@ -171,6 +173,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       setState(() {
         _visibleEditBtn = !_visibleEditBtn;
         _visibleStatusCard = !_visibleStatusCard;
+        _visibleEditPostBtn = !_visibleEditPostBtn;
       });
     }else if(AppReciveUserID.toString() != JsonReciveUser_ID.toString()){
       print("Condition Not equal");
@@ -268,66 +271,50 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
     double _width = width * 0.70;
     double height = MediaQuery.of(context).size.height;
     double _height = height * 0.85;
+    final EditPosttab = new Align(
+      alignment: Alignment.topRight,
+      child: new Column(
+        children: <Widget>[
+
+          Visibility(
+            visible: _visibleEditBtn,
+            child: new IconButton(
+              padding: new EdgeInsets.all(0.0),
+              icon: new Icon(
+                FontAwesomeIcons.edit,
+                color:ColorCode.TextColorCodeBlue,
+                ),
+              onPressed: () {
+                setState(() {
+                  //ReciveJsonRECID =widget.value2.toString(); //if you want to assign the index somewhere to check//if you want to assign the index somewhere to check
+                  // print("CatID"+widget.value2.toString());
+                  print("hello"+widget.value1.toString());
+                });
+                var route = new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                  new EditPostImage(
+                      value1: " ${widget.value1.toString()}"),
+                  );
+                Navigator.of(context).push(route);
+              },
+              ),
+
+            ),
+        ],
+        ),
+
+
+      );
     final listJson = new Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
         new SingleChildScrollView(
           child: new Column(
             children: <Widget>[
-              new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5.0, top: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "",
-                          style: TextStyle(
-                              color: ColorCode.TextColorCodeBlue,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                          ),
-                        new GestureDetector(
-                          /* onTap: () {
-                    var route = new MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                        new Categories()
-                        );
-                    Navigator.of(context).push(route);
-                  },*/
-                          child: new IconButton(
-                            padding: new EdgeInsets.all(0.0),
-                            icon: new Icon(
-                              FontAwesomeIcons.edit,
-                              color: ColorCode.TextColorCodeBlue,
-                              ),
-                            onPressed: () {
-                              setState(() {
-                                //ReciveJsonRECID =widget.value2.toString(); //if you want to assign the index somewhere to check//if you want to assign the index somewhere to check
-                                // print("CatID"+widget.value2.toString());
-                                print("hello" + widget.value1.toString());
-                              });
-                              var route = new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                new EditPostImage(
-                                    value1: " ${widget.value1.toString()}"),
-                                );
-                              Navigator.of(context).push(route);
-                            },
-                            ),
-                          ),
-                      ],
-                      ),
-                    ),
-                ],
-                ),
 //--------------------------------------------------------------------------------------------//
-              /*new SizedBox(
-                height: 20.0,
-                ),*/
+              new SizedBox(
+                height: 10.0,
+                ),
               Container(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -561,9 +548,9 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                   ),
                 leading: IconButton(
                   icon: Icon(FontAwesomeIcons.infoCircle, color: ColorCode.TextColorCodeBlue),
-                  onPressed: () {
+                  /*onPressed: () {
                     //  _launchCaller(phoneNumber);
-                  },
+                  },*/
                   ),
                 ),
               ),
@@ -577,9 +564,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       Navigator.of(context).pushNamed(HomeScreen.tag);
     }
 //---------------------------------------------------------------------------------------------------//
-    return new WillPopScope(
-      onWillPop: BackScreen,
-      child: Scaffold(
+    return Scaffold(
         drawer: _drawer(),
         key: _scaffoldKey,
         appBar: new AppBar(
@@ -641,6 +626,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         body: new ListView(
           shrinkWrap: true,
           children: <Widget>[
+            EditPosttab,
             listJson,
             Status,
             //listJson
@@ -666,23 +652,32 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       ),
                     )
                   ),
-              /*  Expanded(
-                child: Container(
-                  height: 50,
-                  color:ColorCode.AppColorCode,
-                  child: new FlatButton.icon(
-                    //color: Colors.red,
-                    icon: Icon(FontAwesomeIcons.trash,color: Colors.white,), //`Icon` to display
-                      label: Text(GlobalString.DeleteImage.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+              Visibility(
+                  visible: _visibleEditPostBtn,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width,
+                    height:50,
+                    child: FlatButton.icon(
                       onPressed: () {
-                        *//* GetCountRequest(); //fun1
-                        _ackAlert(); //fun2*//*
+                        setState(() {
+                          SendReciveJsonAdv_ID =ReciveJsonAdv_ID.toString(); //if you want to assign the index somewhere to check
+                           print("SendReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+                        });
+                        var route = new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          new EditPost(
+                              value: ReciveJsonAdv_ID.toString(),
+                              ),
+                          );
+                        Navigator.of(context).push(route);
                       },
-                    ),
-
+                      color: ColorCode.AppColorCode,
+                      icon: Icon(FontAwesomeIcons.solidEdit,color: Colors.white,), //`Icon` to display
+                      label: Text(GlobalString.EditPodt.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
+                      ),
+                    )
                   ),
-                flex: 3,
-                ),*/
             ],
             ),
           ),
@@ -730,8 +725,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
             ],
             ),
           ),*/
-        ),
-      );
+        );
   }
 //---------------------------------------------------------------------------------------------------//
   Widget _drawer() {
