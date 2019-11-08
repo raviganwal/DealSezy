@@ -374,7 +374,7 @@ class _EditPostImageScreen extends State<EditPostImage> {
                       height: 30.0,
                       width: 60.0,
                       decoration: new BoxDecoration(
-                          color: Colors.black,
+                          color: ColorCode.AppColorCode,
                           borderRadius: new BorderRadius.only(
                             topRight: new Radius.circular(5.0),
                             bottomRight: new Radius.circular(5.0),
@@ -387,7 +387,7 @@ class _EditPostImageScreen extends State<EditPostImage> {
                               icon: Icon(
                                 FontAwesomeIcons.trash,
                                 color: Colors.white,
-                                size: 20.0,
+                                size: 15.0,
                                 ),
                               onPressed: () {
                                 setState(() {

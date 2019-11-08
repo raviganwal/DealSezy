@@ -17,7 +17,7 @@ class Preferences {
     prefs.setString(KEY_FirstNAME, data["JSONDATA"]['First Name']);
     prefs.setString(KEY_LastNAME, data["JSONDATA"]['Last Name']);
     prefs.setString(KEY_Email, data["JSONDATA"]['Email']);
-    prefs.setString(KEY_FullName, data["JSONDATA"]['First Name']+""+data["JSONDATA"]['Last Name']);
+    prefs.setString(KEY_FullName, data["JSONDATA"]['First_Name']+""+data["JSONDATA"]['Last_Name']);
 
    /* print("KEY_UserID"+data["JSONDATA"]["USER_ID"].toString());
     print("KEY_UserStatus"+data["JSONDATA"]["Status"].toString());
@@ -26,6 +26,7 @@ class Preferences {
     print("LastName"+data["JSONDATA"]['Last Name']);
     print("KEY_Email"+data["JSONDATA"]['Email']);
     print("KEY_FullName"+data["JSONDATA"]['First Name']+""+data["JSONDATA"]['Last Name']);*/
+    print("KEY_FullName"+data["JSONDATA"]['First_Name']+""+data["JSONDATA"]['Last_Name']);
 
   }
 }

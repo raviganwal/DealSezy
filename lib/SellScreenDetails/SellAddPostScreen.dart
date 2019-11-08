@@ -30,6 +30,7 @@ class SellAddPostScreen extends StatefulWidget {
 }
 //------------------------------------------------------------------------------//
 class _MyAppState extends State<SellAddPostScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool checkBoxValue = false;
   double _height;
   double _width;
@@ -140,6 +141,7 @@ class _MyAppState extends State<SellAddPostScreen> {
     _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
 
       return new Scaffold(
+        key:_scaffoldKey,
         appBar: AppBar(
           iconTheme: new IconThemeData(color: Colors.white),
           title: Text(GlobalString.AddPost.toUpperCase(),style: TextStyle(color: ColorCode.TextColorCode),),
@@ -220,7 +222,11 @@ class _MyAppState extends State<SellAddPostScreen> {
                     //color: Colors.red,
                     icon: Icon(Icons.send,color: Colors.white,), //`Icon` to display
                       label: Text(GlobalString.FormSubmit.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                      onPressed: _sendToServer,
+                      /*onPressed: _sendToServer,*/
+                      onPressed: () {
+                        _displaySnackbar(context);
+                        _sendToServer();
+                      },
                     ),
 
                   ),
@@ -230,6 +236,14 @@ class _MyAppState extends State<SellAddPostScreen> {
             ),
           ),
         );
+  }
+//------------------------------------------------------------------------------------------------------------//
+  void  _displaySnackbar(BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      duration: Duration(seconds: 10),
+      content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
+      backgroundColor: ColorCode.AppColorCode,
+      ));
   }
   //--------------------------------------------------------------------------------------------------------------//
   Widget FormUI() {
@@ -256,7 +270,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Title',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Title'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Title',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.heading,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -278,7 +292,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Description',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Description'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Description',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.solidCommentDots,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -300,7 +314,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Features',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Features'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Features',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.solidFlag,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -322,7 +336,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Condition',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Condition'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Condition',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.solidQuestionCircle,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -344,7 +358,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Reason of Selling',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Reason of Selling'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Reason of Selling',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.sellcast,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -366,7 +380,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Price',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Price'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Price',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.rupeeSign,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',
@@ -389,7 +403,7 @@ class _MyAppState extends State<SellAddPostScreen> {
                   border: new OutlineInputBorder(),
                   hintText: 'Enter Visible',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
                   //helperText: 'Keep it short, this is just a demo.',
-                  labelText: 'Enter Visible'.toUpperCase(),labelStyle:
+                  labelText: 'Enter Visible',labelStyle:
                 new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
                   prefixIcon: const Icon(FontAwesomeIcons.solidEye,  color:Color(0xFF0B3D57),),
                   prefixText: ' ',

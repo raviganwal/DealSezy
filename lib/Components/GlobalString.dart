@@ -60,9 +60,10 @@ class GlobalString {
   static String DeleteImage="Delete";
   static String UploadImage="Upload Image";
   static String SendImage="send";
-  static String Camera="camera";
+  static String Camerabtn="camera";
+  static String Camera="Take a picture";
   static String CameraString="Make a Choice!";
-  static String Gallary="Gallary";
+  static String Gallary="Select from gallery";
   static String Price="Price";
   static String Title="Title";
   static String Time="Time";
@@ -79,8 +80,9 @@ class GlobalString {
   static String Mobile="Mobile";
   static String Organization="Organization";
   static String ProfileUpdate="Profile Update";
-  static String UpdateProfileBtn="Update Profile";
+  static String UpdateProfileBtn="Submit";
   static String Chat="Chat Now";
+  static String Call="Call Now";
   static String EditPodt="Edit Post";
   static String PodtEdit="Post Edit";
   static String AboutUs="Abou Us";

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dealsezy/HomeScreenTabController/MyAccount.dart';
+import 'package:dealsezy/HomeScreenTabController/MyAdv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
@@ -13,7 +15,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:io';import 'package:dealsezy/Components/ColorCode.dart';
+import 'package:dealsezy/Components/GlobalString.dart';
+import 'package:async/async.dart';
+import 'package:path/path.dart';
 //----------------------------------------------------------------------------------------------//
 class ProfileUpdate extends StatefulWidget {
   static String tag = 'ProfileUpdate';
@@ -41,6 +46,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   String ReciveJsonUSERMobile ='';
   String ReciveJsonUSEROrganization ='';
   String ReciveJsonUSERStatus='';
+  var ReciveJsonUSERProfilePIC='';
   bool dialog = false;
   File _image;
 
@@ -55,7 +61,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeMobile = FocusNode();
   final FocusNode myFocusNodeOrganization = FocusNode();
-
+  BuildContext _scaffoldContext;
 //----------------------------------------------------------------------------------------------//
   String UpdateProfileurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/MyProfile.php';
   fetchMyProfileUpdate() async {
@@ -74,15 +80,16 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       setState(() {
         var extractdata = json.decode(resultUpdateProfile.body);
         data = extractdata["JSONDATA"];
-       // print("ReciveData"+data.toString());
+        print("ReciveData"+data.toString());
 
         ReciveJsonUSER_ID = data[0]["USER_ID"].toString();
-        ReciveJsonUSERFirstName = data[0]["First Name"].toString();
-        ReciveJsonUSERLastName = data[0]["Last Name"].toString();
+        ReciveJsonUSERFirstName = data[0]["First_Name"].toString();
+        ReciveJsonUSERLastName = data[0]["Last_Name"].toString();
         ReciveJsonUSEREmail = data[0]["Email"].toString();
         ReciveJsonUSERMobile = data[0]["Mobile"].toString();
         ReciveJsonUSEROrganization = data[0]["Organization"].toString();
         ReciveJsonUSERStatus = data[0]["Status"].toString();
+        //ReciveJsonUSERProfilePIC = data[0]["ProfilePIC"].toString();
 
            /*print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
            print("ReciveJsonUSERFirstName"+ReciveJsonUSERFirstName.toString());
@@ -90,7 +97,8 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
            print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
            print("ReciveJsonUSERMobile"+ReciveJsonUSERMobile.toString());
            print("ReciveJsonUSEROrganization"+ReciveJsonUSEROrganization.toString());
-           print("ReciveJsonUSERStatus"+ReciveJsonUSERStatus.toString());*/
+           print("ReciveJsonUSERStatus"+ReciveJsonUSERStatus.toString());
+          print("ReciveJsonUSERProfilePIC"+ReciveJsonUSERProfilePIC.toString());*/
       });
 
     }).catchError((error) {
@@ -108,7 +116,78 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       status = message;
     });
   }
-//---------------------------------------------------------------------------------------------------//
+  Future<void> _ProfileUpdateAlert(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Thanks.. ', textAlign: TextAlign.center,
+                        style: new TextStyle(fontSize: 15.0,
+                                                 color: ColorCode.TextColorCodeBlue,
+                                                 fontWeight: FontWeight.bold),),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Profile Updated Sucessfully".toString(),
+                       textAlign: TextAlign.center,
+                       style: new TextStyle(fontSize: 12.0,
+                                                color: ColorCode.TextColorCodeBlue,
+                                                fontWeight: FontWeight.bold),),
+              ],
+              ),
+            ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                setState(() {
+                  Navigator.of(context).pushNamed(MyAccount.tag);
+                });
+              },
+              child: Text('Ok', style: new TextStyle(fontSize: 15.0,
+                                                         color: ColorCode.TextColorCodeBlue,
+                                                         fontWeight: FontWeight
+                                                             .bold),),
+              )
+          ],
+          );
+      },
+      );
+  }
+ Future ProfileImageUpload(File imageFile) async {
+    var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    var length = await imageFile.length();
+
+    var uri = Uri.parse("http://gravitinfosystems.com/Dealsezy/dealseazyApp/ProfileImageUpdate.php");
+    final response =
+    await http.get(uri);
+    if (response.statusCode == 200) {
+    }
+    print("uri"+uri.toString());
+    var request = new http.MultipartRequest("POST", uri);
+    request.fields['Token'] = GlobalString.Token;
+    request.fields['User_ID'] = ReciveUserID.toString();
+
+    print("Token"+request.fields['Token'].toString());
+    print("User_ID"+request.fields['User_ID'].toString());
+
+    var multipartFile =  new http.MultipartFile("image", stream,length,filename: basename(imageFile.path));
+    //print("response"+response.body.toString());
+    request.files.add(multipartFile);
+
+    var respone = await request.send();
+    print(response.toString());
+    //return response.body;
+    ///print(response.body.toString());
+
+    if (respone.statusCode==200) {
+      print("Image Uploaded");
+    }
+    else{
+      print("Image Failed");
+    }
+  }
+
   String Upadteurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/ProfileUpdate.php';
   uploadProfileUpadte() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -121,7 +200,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       "Mobile": MobileController.text.toString(),
       "Organization": OrganizationController.text.toString(),
     }).then((resultUpadte) {
-      /*print("URL"+Upadteurl.toString());
+      print("URL"+Upadteurl.toString());
       print("Token"+GlobalString.Token);
       print("User_ID"+ReciveUserID.toString());
       print("FirstName"+FirstNameController.text.toString());
@@ -129,24 +208,41 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       print("Mobile" + MobileController.text.toString());
       print("Organization" + OrganizationController.text.toString());
       print("statusCode" + resultUpadte.statusCode.toString());
-      print("resultbody" + resultUpadte.body);*/
+      print("resultbody" + resultUpadte.body);
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(resultUpadte.statusCode == 200 ? resultUpadte.body : errMessage);
       var data = json.decode(resultUpadte.body);
       ReciveJsonStatus = data["status"].toString();
-     // print("status" + ReciveJsonStatus.toString());
+       print("status" + ReciveJsonStatus.toString());
 
-      _handleSubmitted();
+      //_handleSubmitted();
 
     }).catchError((error) {
       setStatus(error);
     });
   }
+//------------------------------------------------------------------------------------------------------------//
+ /* void _handleSubmitted() {
+    if(ReciveJsonStatus == "false"){
+      print("false");
+      _FalseAlert();
+    }else if(ReciveJsonStatus == true){
+      _TrueSuccessAlert();
+      print("True");
+    }
+  }*/
+//-------------------------------------------------------------------------------------------//
+  Future getImageFromCam() async { // for camera
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _image = image;
+      print("getImageFromCam"+_image.toString());
+    });
+  }
   //--------------------------------------------------------------------------------------------------------//
   Future<void> _FalseAlert() async {
     return showDialog<void>(
-      context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
@@ -181,7 +277,6 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
 //--------------------------------------------------------------------------------------------------------//
   Future<void> _TrueSuccessAlert() async {
     return showDialog<void>(
-      context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
@@ -227,14 +322,6 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       },
       );
   }
-  //-------------------------------------------------------------------------------------------//
-  Future getImageFromCam() async { // for camera
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _image = image;
-      print("getImageFromCam"+_image.toString());
-    });
-  }
 //-------------------------------------------------------------------------------------------//
   Future getImageFromGallery() async {// for gallery
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -248,46 +335,43 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
     setState(() {
       dialog = true;
     });
-
     showDialog(
       context: context,
       barrierDismissible: false,
       child: new Dialog(
-
         child: new Container(
-          height: 125.0,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          height: 260.0,
+          child: ListView(
             children: <Widget>[
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.camera,color:ColorCode.TextColorCodeBlue),
-                  GestureDetector(
-                    onTap: () {getImageFromCam();},
-                    child: Container(
-                      padding: EdgeInsets.only(left:20.0),
-                      child: Text(GlobalString.Camera.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                      ),
+              Card(child: ListTile(title: Text(GlobalString.CameraString,textAlign: TextAlign.center,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),))),
+              Card(
+                child: ListTile(
+                    leading: IconButton(icon:Icon(FontAwesomeIcons.camera,size:35.0,color: ColorCode.TextColorCodeBlue,),),
+                    title: Text(GlobalString.Camera.toUpperCase(),textAlign: TextAlign.start,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
+                    onTap: () { getImageFromCam();}
                     ),
-                ],
                 ),
-              new SizedBox(
-                //height: 20.0,
-                ),
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.photo,color:ColorCode.TextColorCodeBlue),
-                  GestureDetector(
-                    onTap: () {getImageFromGallery();},
-                    child: Container(
-                      padding: EdgeInsets.only(left:20.0),
-                      child: Text(GlobalString.Gallary.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                      ),
+              Card(
+                child: ListTile(
+                    leading: IconButton(icon:Icon(FontAwesomeIcons.image,size:35.0,color: ColorCode.TextColorCodeBlue,),),
+                    title: Text(GlobalString.Gallary.toUpperCase(),textAlign: TextAlign.start,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
+                    onTap: () { getImageFromGallery();}
                     ),
-                ],
+                ),
+              Card(
+                child: ListTile(
+                  subtitle: Text(
+                      ''
+                      ),
+                  trailing: Text('Cancel', style: new TextStyle(fontSize: 15.0,
+                                                                color: ColorCode.TextColorCodeBlue,
+                                                                fontWeight: FontWeight
+                                                                    .bold),),
+                    onTap: () { Navigator.pop(context, true);}
+                  ),
                 ),
             ],
-            ),
+            )
           ),
         ),
       ).then((_) {
@@ -297,24 +381,20 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
         });
       }
     });
-
-    new Future.delayed(const Duration(seconds: 5), () {
+    new Future.delayed(const Duration(seconds:5), () {
       // When task is over, close the dialog
       Navigator.of(context, rootNavigator: false).pop();
     });
   }
 //------------------------------------------------------------------------------------------------------------//
-  void _handleSubmitted() {
-    if(ReciveJsonStatus == "false"){
-      print("false");
-      _FalseAlert();
-    }else if(ReciveJsonStatus == "true"){
-      _TrueSuccessAlert();
-      print("True");
-    }
+  void  _displaySnackbar(BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
+         backgroundColor: ColorCode.AppColorCode,
+        ));
   }
-
-
+//------------------------------------------------------------------------------------------------------------//
   @override
   void initState() {
     super.initState();
@@ -344,7 +424,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                     height: 140.0,
                     child: Center(
                       child: _image == null
-                          ? Text('No image selected.')
+                          ? Image.network(imageurl+ReciveJsonUSERProfilePIC)
                           : Image.file(_image),
 
                       ),
@@ -399,7 +479,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'First Name*',
+                                'First Name',
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -450,7 +530,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Last Name*',
+                                'Last Name',
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -552,7 +632,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Mobile Number*',
+                                'Mobile Number',
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -569,6 +649,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                         children: <Widget>[
                           new Flexible(
                             child: new TextFormField(
+                              maxLength: 10,
                               controller: MobileController,
                               focusNode: myFocusNodeMobile,
                               keyboardType: TextInputType.number,
@@ -604,7 +685,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Organization*',
+                                'Organization',
                                 style: TextStyle(
                                     color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
                                     letterSpacing: 1.3),
@@ -623,6 +704,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                             child: new TextFormField(
                               controller: OrganizationController,
                               focusNode: myFocusNodeOrganization,
+                              keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 hintText: ReciveJsonUSEROrganization,
                                 fillColor:ColorCode.TextColorCodeBlue,
@@ -652,6 +734,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
       );
 //---------------------------------------------------------------------------------------------//
     return Scaffold(
+      key: _scaffoldKey,
         appBar: new AppBar(
           title: Text(GlobalString.ProfileUpdate.toUpperCase(),style: TextStyle(
               fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),),
@@ -691,11 +774,10 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                   icon: Icon(FontAwesomeIcons.fileExport,color: Colors.white,), //`Icon` to display
                     label: Text(GlobalString.UpdateProfileBtn.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                    onPressed: () {
-                      /*setState(() {
+                       _displaySnackbar(context);
                         uploadProfileUpadte();
-                      });*/
-                     uploadProfileUpadte();
-
+                        ProfileImageUpload(_image);
+                        _ProfileUpdateAlert(context);
                     },
                   ),
 

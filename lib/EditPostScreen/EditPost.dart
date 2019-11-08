@@ -23,6 +23,7 @@ class EditPost extends StatefulWidget {
 //----------------------------------------------------------------------------------------------//
 class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
   TextEditingController controller1 = new TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var data;
   var loading = false;
   String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
@@ -79,7 +80,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
       setState(() {
         var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-        // print("ReciveData"+data.toString());
+        print("ReciveData"+data.toString());
 
         ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
         ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
@@ -89,7 +90,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
         ReciveDescription = data[0]["Description"].toString();
         ReciveFeatures = data[0]["Features"].toString();
         ReciveCondition = data[0]["Condition"].toString();
-        ReciveReasonofSelling = data[0]["Reason of Selling"].toString();
+        ReciveReasonofSelling = data[0]["Reason_of_Selling"].toString();
         JsonReciveUser_ID = data[0]["User_ID"].toString();
         RecivePost_Time = data[0]["Post_Time"].toString();
         ReciveVisible_To = data[0]["Visible_To"].toString();
@@ -134,7 +135,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
       "Condition": ConditionController.text.toString(),
       "Reason": ReasonController.text.toString(),
     }).then((resultUpadte) {
-      /*print("URL"+UpdatePostEdit.toString());
+      print("URL"+UpdatePostEdit.toString());
       print("Token"+GlobalString.Token);
       print("Adv_ID"+widget.value.toString());
       print("Title"+TitleController.text.toString());
@@ -144,7 +145,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
       print("Condition" +ConditionController.text.toString());
       print("Reason" +ReasonController.text.toString());
       print("statusCode" + resultUpadte.statusCode.toString());
-      print("resultbody" + resultUpadte.body);*/
+      print("resultbody" + resultUpadte.body);
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(resultUpadte.statusCode == 200 ? resultUpadte.body : errMessage);
@@ -157,6 +158,14 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
     }).catchError((error) {
       setStatus(error);
     });
+  }
+  //------------------------------------------------------------------------------------------------------------//
+  void  _displaySnackbar(BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      duration: Duration(seconds: 10),
+      content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
+      backgroundColor: ColorCode.AppColorCode,
+      ));
   }
   //--------------------------------------------------------------------------------------------------------//
   Future<void> _FalseAlert() async {
@@ -652,6 +661,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
       );
 //---------------------------------------------------------------------------------------------//
     return Scaffold(
+      key:_scaffoldKey,
       appBar: new AppBar(
         title: Text(GlobalString.PodtEdit.toUpperCase(),style: TextStyle(
             fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),),
@@ -690,6 +700,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
                   icon: Icon(FontAwesomeIcons.solidEdit,color: Colors.white,), //`Icon` to display
                     label: Text(GlobalString.PodtEdit.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                     onPressed: () {
+                      _displaySnackbar(context);
                       EditPostUpadte();
                     },
                   ),

@@ -67,30 +67,31 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
       setStatus(resultMyProfile.statusCode == 200 ? resultMyProfile.body : errMessage);
       setState(() {
         var extractdata = json.decode(resultMyProfile.body);
-        data = extractdata["JSONDATA"];
+         data = extractdata["JSONDATA"];
          print("ReciveData"+data.toString());
 
         ReciveJsonUSER_ID = data[0]["USER_ID"].toString();
-        ReciveJsonUSERFirstName = data[0]["First Name"].toString();
-        ReciveJsonUSERLastName = data[0]["Last Name"].toString();
+        ReciveJsonUSERFirstName = data[0]["First_Name"].toString();
+        ReciveJsonUSERLastName = data[0]["Last_Name"].toString();
         ReciveJsonUSEREmail = data[0]["Email"].toString();
         ReciveJsonUSERMobile = data[0]["Mobile"].toString();
         ReciveJsonUSERPassword = data[0]["Password"].toString();
         ReciveJsonUSEROrganization = data[0]["Organization"].toString();
         ReciveJsonUSERProfilePIC = data[0]["ProfilePIC"].toString();
         ReciveJsonUSERStatus = data[0]["Status"].toString();
-        ReciveJsonUSERFullName= data[0]["First Name"]+ " " +data[0]["Last Name"].toString();
+        ReciveJsonUSERFullName= data[0]["First_Name"]+ " " +data[0]["Last_Name"].toString();
 
-           print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
+         //  print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
            print("ReciveJsonUSERFirstName"+ReciveJsonUSERFirstName.toString());
            print("ReciveJsonUSERLastName"+ReciveJsonUSERLastName.toString());
-           print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
+           print("ReciveJsonUSERFullName"+ReciveJsonUSERFullName.toString());
+          /* print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
            print("ReciveJsonUSERMobile"+ReciveJsonUSERMobile.toString());
            print("ReciveJsonUSERPassword"+ReciveJsonUSERPassword.toString());
            print("ReciveJsonUSEROrganization"+ReciveJsonUSEROrganization.toString());
            print("ReciveJsonUSERProfilePIC"+ReciveJsonUSERProfilePIC.toString());
            print("ReciveJsonUSERStatus"+ReciveJsonUSERStatus.toString());
-           print("ReciveJsonUSERFullName"+ReciveJsonUSERFullName.toString());
+           print("ReciveJsonUSERFullName"+ReciveJsonUSERFullName.toString());*/
       });
 
     }).catchError((error) {
@@ -294,7 +295,7 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
           children: <Widget>[
             UserAccountsDrawerHeader(
 
-              accountName: Text("Mr. "+ReciveUserFullName.toUpperCase(),style: TextStyle(
+              accountName: Text("Mr. "+ReciveJsonUSERFullName.toUpperCase(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,

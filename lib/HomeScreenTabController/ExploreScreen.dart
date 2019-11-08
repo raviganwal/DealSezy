@@ -110,6 +110,7 @@ class ExploreScreenState extends State<ExploreScreen>{
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
     ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
     ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
+    print("Akash"+ReciveUserFullName);
     http.post(resultMyAdvurl, body: {
       "Token": GlobalString.Token,
       "User_ID": ReciveUserID.toString()

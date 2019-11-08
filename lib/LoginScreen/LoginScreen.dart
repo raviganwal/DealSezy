@@ -67,6 +67,7 @@ class _MyAppState extends State<LoginScreen> {
             false); //return a `Future` with false value so this route cant be popped or closed.
       },
       child: new Scaffold(
+        key: _scaffoldKey,
         body: new Container(
           height: _height,
           width: _width,
@@ -189,7 +190,11 @@ class _MyAppState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 textColor: Colors.white,
                 padding: EdgeInsets.all(0.0),
-                onPressed: _sendToServer,
+                /*onPressed(){_sendToServer();_displaySnackbar();} ,*/
+                onPressed: () {
+                  _displaySnackbar(context);
+                   _sendToServer();
+                },
                 child: Container(
                   alignment: Alignment.center,
 //        height: _height / 20,
@@ -221,28 +226,28 @@ class _MyAppState extends State<LoginScreen> {
 //--------------------------------------------------------------------------------------------------------------------------------//
   Widget forgetPassTextRow() {
     return Container(
-      margin: EdgeInsets.only(top: _height / 40.0),
-      child: Row(children: <Widget>[
-        Expanded(
-          child: RaisedButton(
-            color: ColorCode.TextColorCode,
-            child:  Text(
-              GlobalString.Forgot,
-              style: TextStyle(color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold,fontSize: _large? 14: (_medium? 12: 10)),
+        margin: EdgeInsets.only(top: _height / 40.0),
+        child: Row(children: <Widget>[
+          Expanded(
+            child: RaisedButton(
+              color: ColorCode.TextColorCode,
+              child:  Text(
+                GlobalString.Forgot,
+                style: TextStyle(color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold,fontSize: _large? 14: (_medium? 12: 10)),
+                ),
+              onPressed: () => null,
               ),
-            onPressed: () => null,
             ),
-          ),
-        Expanded(
-          child: RaisedButton(
-            color: ColorCode.AppColorCode,
-            child: Text(
-              GlobalString.Signup, style: TextStyle(color:ColorCode.TextColorCode,fontSize: _large? 14: (_medium? 12: 10)),),
-            onPressed: () => Navigator.of(context).pushNamed(SignUpScreen.tag),
+          Expanded(
+            child: RaisedButton(
+              color: ColorCode.AppColorCode,
+              child: Text(
+                GlobalString.Signup, style: TextStyle(color:ColorCode.TextColorCode,fontSize: _large? 14: (_medium? 12: 10)),),
+              onPressed: () => Navigator.of(context).pushNamed(SignUpScreen.tag),
+              ),
             ),
-          ),
-      ])
-      );
+        ])
+        );
   }
 //----------------------------------------------------------------------------------------------//
   Widget signUpTextRow() {
@@ -271,6 +276,13 @@ class _MyAppState extends State<LoginScreen> {
       return null;
     }
   }
+  void  _displaySnackbar(BuildContext context) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
+      backgroundColor: ColorCode.AppColorCode,
+      ));
+  }
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/Login.php';
   GetLogin() async {
@@ -293,7 +305,7 @@ class _MyAppState extends State<LoginScreen> {
       //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(result.statusCode == 200 ? result.body : errMessage);
-       data = json.decode(result.body);
+      data = json.decode(result.body);
 
       //print("ReciveData"+data.toString());
 
@@ -310,9 +322,9 @@ class _MyAppState extends State<LoginScreen> {
       ReciveUserEmail =data["JSONDATA"]["Email"].toString();
 
 
-  /*    print("ReciveUserStatus" + ReciveUserStatus.toString());
+      /*    print("ReciveUserStatus" + ReciveUserStatus.toString());
       print("ReciveUserID" + ReciveUserID.toString());*/
-     /* print("ReciveUserFirstName" + ReciveUserFirstName.toString());
+      /* print("ReciveUserFirstName" + ReciveUserFirstName.toString());
       print("ReciveUserLastName" + ReciveUserLastName.toString());
       print("ReciveUserEmail" + ReciveUserEmail.toString());
       print("ReciveUserFullName" + ReciveUserFullName.toString());*/

@@ -113,71 +113,70 @@ class _ImageUploadState extends State<ImageUpload> {
     }
   }
 //-------------------------------------------------------------------------------------------//
-        void _showDialog(BuildContext context) {
-          setState(() {
-            dialog = true;
-          });
+  void _showDialog(BuildContext context) {
+    setState(() {
+      dialog = true;
+    });
 
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            child: new Dialog(
-
-              child: new Container(
-                  height: 125.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        new Icon(Icons.camera,color:ColorCode.TextColorCodeBlue),
-                        GestureDetector(
-                          onTap: () {getImageFromCam();},
-                          child: Container(
-                            padding: EdgeInsets.only(left:20.0),
-                            child: Text(GlobalString.Camera.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                            ),
-                          ),
-                      ],
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      child: new Dialog(
+        child: new Container(
+            height: 260.0,
+            child: ListView(
+              children: <Widget>[
+                Card(child: ListTile(title: Text(GlobalString.CameraString,textAlign: TextAlign.center,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),))),
+                Card(
+                  child: ListTile(
+                      leading: IconButton(icon:Icon(FontAwesomeIcons.camera,size:35.0,color: ColorCode.TextColorCodeBlue,),),
+                      title: Text(GlobalString.Camera.toUpperCase(),textAlign: TextAlign.start,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
+                      onTap: () { getImageFromCam();}
                       ),
-                    new SizedBox(
-                      //height: 20.0,
-                      ),
-                    new Row(
-                      children: <Widget>[
-                        new Icon(Icons.photo,color:ColorCode.TextColorCodeBlue),
-                        GestureDetector(
-                          onTap: () {getImageFromGallery();},
-                          child: Container(
-                            padding: EdgeInsets.only(left:20.0),
-                            child: Text(GlobalString.Gallary.toUpperCase().toString(),style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold,color:ColorCode.TextColorCodeBlue),),
-                            ),
-                          ),
-                      ],
-                      ),
-                  ],
                   ),
+                Card(
+                  child: ListTile(
+                      leading: IconButton(icon:Icon(FontAwesomeIcons.image,size:35.0,color: ColorCode.TextColorCodeBlue,),),
+                      title: Text(GlobalString.Gallary.toUpperCase(),textAlign: TextAlign.start,style: TextStyle(fontSize: 15.0,color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
+                      onTap: () { getImageFromGallery();}
+                      ),
                   ),
-              ),
-            ).then((_) {
-            if (mounted) {
-              setState(() {
-                dialog = false; // dialog was closed
-              });
-            }
-          });
+                Card(
+                  child: ListTile(
+                      subtitle: Text(
+                          ''
+                          ),
+                      trailing: Text('Cancel', style: new TextStyle(fontSize: 15.0,
+                                                                        color: ColorCode.TextColorCodeBlue,
+                                                                        fontWeight: FontWeight
+                                                                            .bold),),
+                      onTap: () { Navigator.pop(context, true);}
+                      ),
+                  ),
+              ],
+              )
+            ),
+        ),
+      ).then((_) {
+      if (mounted) {
+        setState(() {
+          dialog = false; // dialog was closed
+        });
+      }
+    });
 
-          new Future.delayed(const Duration(seconds: 5), () {
-            // When task is over, close the dialog
-            Navigator.of(context, rootNavigator: false).pop();
-          });
-        }
+    new Future.delayed(const Duration(seconds:5), () {
+      // When task is over, close the dialog
+      Navigator.of(context, rootNavigator: false).pop();
+    });
+  }
 //-------------------------------------------------------------------------------------------//
   void  _displaySnackbar(BuildContext context) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-        duration: Duration(seconds: 1),
-        content: Text('Image Uploaded Successfully........')
-        ));
+      duration: Duration(seconds: 10),
+      content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
+      backgroundColor: ColorCode.AppColorCode,
+      ));
   }
   //--------------------------------------------------------------------------------------------------------//
   Future<void> _SignupAlert(BuildContext context) async {
@@ -349,7 +348,7 @@ class _ImageUploadState extends State<ImageUpload> {
                   child: new FlatButton.icon(
                     //color: Colors.red,
                     icon: Icon(FontAwesomeIcons.camera,color: Colors.white,), //`Icon` to display
-                      label: Text(GlobalString.Camera.toUpperCase().toString(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+                      label: Text(GlobalString.Camerabtn.toUpperCase().toString(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                       onPressed: () {
                         _showDialog(context);
                        /*_displaySnackbar(context);
@@ -374,7 +373,7 @@ class _ImageUploadState extends State<ImageUpload> {
                                   color: Colors.white,), //`Icon` to display
                       label: Text(GlobalString.SendImage.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                       onPressed: () {
-                        //_displaySnackbar(context);
+                        _displaySnackbar(context);
                         Upload(_image);
                         _SignupAlert(context);
                         //Navigator.of(context).pushNamed(DiplaySellAddPostScreen.tag);

@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:dealsezy/Preferences/Preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 //---------------------------------------------------------------------------------------------------//
 class DiplaySellAddPostScreen extends StatefulWidget {
   static String tag = 'DiplaySellAddPostScreen';
@@ -54,10 +55,16 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   bool _visibleStatusCard = false;
   bool _visibleChatBtn = false;
   bool _visibleEditPostBtn = false;
+  bool _visibleCallNow = false;
+  String JsonReciveFirst_Name ='';
+  String JsonReciveLast_Name ='';
+  String JsonReciveMobile ='';
+  String JsonReciveFullName ='';
   List<Data> _list = [];
   int _current = 0;
   List<Data> imgList = List();
-
+  final String phone = 'tel:+91';
+//-------------------------------------------------------------------------------//
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -70,6 +77,16 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
     setState(() {
       status = message;
     });
+  }
+  //---------------------------------------------------------------------------------------------------//
+  _callPhone() async {
+    print("hello");
+    if (await canLaunch(phone+JsonReciveMobile)) {
+      await launch(phone+JsonReciveMobile);
+      print("GetJsonNumber"+phone+JsonReciveMobile.toString());
+    } else {
+      throw 'Could not Call Phone';
+    }
   }
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvView.php';
@@ -85,14 +102,14 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       //print("Token" + GlobalString.Token);
       //print("DisplayAdv_ID" + widget.value1.toString());
       //  print("statusCode" + result.statusCode.toString());
-      //  print("resultbody" + result.body);
+        //print("resultbody" + result.body);
       //return result.body.toString();
       setStatus(result.statusCode == 200 ? result.body : errMessage);
       setState(() {
         var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-         //print("ReciveData"+data.toString());
-
+         print("ReciveData"+data.toString());
+//-------------------------------------------------------------------------------//
         ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
         ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
         ReciveJsonSubCat_ID = data[0]["SubCat_ID"].toString();
@@ -106,28 +123,39 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         RecivePost_Time = data[0]["Post_Time"].toString();
         ReciveVisible_To = data[0]["Visible_To"].toString();
         ReciveStatus = data[0]["Publish_Status"].toString();
-
-           /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+        JsonReciveFirst_Name = data[0]["First_Name"].toString();
+        JsonReciveLast_Name = data[0]["Last_Name"].toString();
+        JsonReciveMobile = data[0]["Mobile"].toString();
+        JsonReciveFullName = data[0]["First_Name"].toString()+" "+data[0]["Last_Name"].toString();
+//-------------------------------------------------------------------------------//
+          /* print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
            print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
            print("ReciveJsonSubCat_ID"+ReciveJsonSubCat_ID.toString());
            print("ReciveTitle"+ReciveTitle.toString());
            print("RecivePrice"+RecivePrice.toString());
            print("ReciveDescription"+ReciveDescription.toString());
            print("ReciveFeatures"+ReciveFeatures.toString());
-           print("ReciveCondition"+ReciveCondition.toString());
-           print("ReciveReasonofSelling"+ReciveReasonofSelling.toString());
-           print("JsonReciveUser_ID"+JsonReciveUser_ID.toString());
+           print("ReciveCondition"+ReciveCondition.toString());*/
+          // print("ReciveReasonofSelling"+ReciveReasonofSelling.toString());
+        /*   print("JsonReciveUser_ID"+JsonReciveUser_ID.toString());
            print("RecivePost_Time"+RecivePost_Time.toString());
            print("ReciveVisible_To"+ReciveVisible_To.toString());
            print("ReciveStatus"+ReciveStatus.toString());*/
+
+        print("First_Name"+JsonReciveFirst_Name.toString());
+        print("Last_Name"+JsonReciveLast_Name.toString());
+        print("JsonReciveMobile"+JsonReciveMobile.toString());
+        print("JsonReciveFullName"+JsonReciveFullName.toString());
+//-------------------------------------------------------------------------------//
         this._CheckBtnsChatEdit();
+//-------------------------------------------------------------------------------//
       });
     }).catchError((error) {
       setStatus(error);
     });
   }
 
-  //---------------------------------------------------------------------------------------------------//
+  //------------------------------------------------------------------------------//
   String ImagePosturl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/ViewAdvImages.php';
 
   fetchImagePost() {
@@ -166,8 +194,8 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
 //---------------------------------------------------------------------------------------------------------//
   void _CheckBtnsChatEdit() {
     // print("Function equal");
-    print("ReciveUserIDApp"+AppReciveUserID);
-    print("JsonReciveUser_ID"+JsonReciveUser_ID);
+   // print("ReciveUserIDApp"+AppReciveUserID);
+  //  print("JsonReciveUser_ID"+JsonReciveUser_ID);
 
     if(AppReciveUserID.toString() == JsonReciveUser_ID){
       setState(() {
@@ -179,6 +207,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       print("Condition Not equal");
       setState(() {
         _visibleChatBtn = !_visibleChatBtn;
+        _visibleCallNow = !_visibleCallNow;
       });
 
     }
@@ -328,9 +357,9 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       reverse: false,
                       enableInfiniteScroll: false,
 
-                      autoPlayInterval: Duration(seconds: 2),
-                      autoPlayAnimationDuration: Duration(milliseconds: 2000),
-                      pauseAutoPlayOnTouch: Duration(seconds: 10),
+                      autoPlayInterval: Duration(seconds: 1),
+                      autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                      pauseAutoPlayOnTouch: Duration(seconds: 1),
                       scrollDirection: Axis.horizontal,
                       onPageChanged: (index) {
                         /* setState(() {
@@ -351,7 +380,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                                 ),
                               child: Image.network(
                                 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/${imgUrl.imageData}',
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 ),
                               );
                           },
@@ -562,22 +591,38 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
 //---------------------------------------------------------------------------------------------------//
     Future<Null> BackScreen() async {
       Navigator.of(context).pushNamed(HomeScreen.tag);
-    }
+  }
 //---------------------------------------------------------------------------------------------------//
-    return Scaffold(
-        drawer: _drawer(),
+    return new WillPopScope(
+        onWillPop: () => BackScreen(),
+    child: Scaffold(
+        //drawer: _drawer(),
         key: _scaffoldKey,
         appBar: new AppBar(
           iconTheme: new IconThemeData(color: Colors.white),
-          title: new Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: new Container(
-              color: Colors.transparent,
-              child: Text(
-                ReciveTitle.toString().toUpperCase(),style: TextStyle(color: ColorCode.TextColorCode),),
-              ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                ReciveTitle.toString()
+                    .toUpperCase(),textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18.0, color: Colors.white,fontWeight: FontWeight.bold),
+                ),
+              Text(JsonReciveFullName.toUpperCase(),textAlign: TextAlign.center,
+                     style: TextStyle(
+                         fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),
+                   )
+            ],
             ),
           centerTitle: true,
+          leading: IconButton(icon:Icon(Icons.arrow_back),
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed(HomeScreen.tag);
+                                }
+                              ),
+
           actions: <Widget>[
             new Stack(
               children: <Widget>[
@@ -639,7 +684,8 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Visibility(
-                  visible: _visibleChatBtn,
+                visible: _visibleChatBtn,
+                child: new Expanded(
                   child: Container(
                     color: Colors.transparent,
                     width: MediaQuery.of(context).size.width,
@@ -650,10 +696,46 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       icon: Icon(FontAwesomeIcons.solidComment,color: Colors.white,), //`Icon` to display
                       label: Text(GlobalString.Chat.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                       ),
-                    )
-                  ),
+                    ),
+                flex: 2,
+                ),),
               Visibility(
-                  visible: _visibleEditPostBtn,
+                visible: _visibleCallNow,
+                child: new Expanded(
+                  child: Container(
+                    color: Colors.transparent,
+                    width: 10.0,
+                    height:50,
+                   /* child: FlatButton.icon(
+                      onPressed: () => _callPhone(),
+                      color: ColorCode.AppColorCode,
+                      icon: Icon(Icons.phone,color: Colors.white,), //`Icon` to display
+                      label: Text(GlobalString.Call.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
+                      ),*/
+                    ),
+                  flex: 0,
+                  ),),
+//-------------------------------------------------------------------//
+              Visibility(
+                visible: _visibleCallNow,
+                child: new Expanded(
+                  child: Container(
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width,
+                    height:50,
+                    child: FlatButton.icon(
+                      onPressed: () => _callPhone(),
+                      color: ColorCode.AppColorCode,
+                      icon: Icon(Icons.phone,color: Colors.white,), //`Icon` to display
+                      label: Text(GlobalString.Call.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
+                      ),
+                    ),
+                  flex: 3,
+                  ),),
+//-------------------------------------------------------------------//
+              Visibility(
+                visible: _visibleEditPostBtn,
+                child: new Expanded(
                   child: Container(
                     color: Colors.transparent,
                     width: MediaQuery.of(context).size.width,
@@ -662,13 +744,13 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       onPressed: () {
                         setState(() {
                           SendReciveJsonAdv_ID =ReciveJsonAdv_ID.toString(); //if you want to assign the index somewhere to check
-                           print("SendReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
+                          print("SendReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
                         });
                         var route = new MaterialPageRoute(
                           builder: (BuildContext context) =>
                           new EditPost(
-                              value: ReciveJsonAdv_ID.toString(),
-                              ),
+                            value: ReciveJsonAdv_ID.toString(),
+                            ),
                           );
                         Navigator.of(context).push(route);
                       },
@@ -676,55 +758,14 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       icon: Icon(FontAwesomeIcons.solidEdit,color: Colors.white,), //`Icon` to display
                       label: Text(GlobalString.EditPodt.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                       ),
-                    )
-                  ),
+                    ),
+                  flex: 1,
+                  ),),
+//-------------------------------------------------------------------//
             ],
             ),
           ),
-        /*        bottomNavigationBar: BottomAppBar(
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  height: 50,
-                  color:Color(0xFF222B78),
-                  child: new FlatButton.icon(
-                    //color: Colors.red,
-                    icon: Icon(Icons.arrow_back,color: Colors.white,), //`Icon` to display
-                      label: Text('back'.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                      onPressed: () {
-                       / / Navigator
-                            .of(context)
-                            .push(new MaterialPageRoute(builder: (_) => new Product()));/ /
-                      },
-                    ),
-
-                  ),
-                flex: 2,
-                ),
-              Expanded(
-                child: Container(
-                  height: 50,
-                  color:Color(0xFFE0318C),
-                  child: new FlatButton.icon(
-                    //color: Colors.red,
-                    icon: Icon(Icons.add_shopping_cart,color: Colors.white,), //`Icon` to display
-                      label: Text('add to cart'.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                      onPressed: () {
-                       / / GetCountRequest(); //fun1
-                        _ackAlert(); //fun2*//*
-                      },
-                    ),
-
-                  ),
-                flex: 3,
-                ),
-            ],
-            ),
-          ),*/
+        ),
         );
   }
 //---------------------------------------------------------------------------------------------------//

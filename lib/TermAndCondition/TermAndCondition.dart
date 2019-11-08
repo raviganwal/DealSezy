@@ -11,6 +11,9 @@ import 'package:dealsezy/Preferences/Preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 //-------------------------------------------------------------------------------------------//
 class TermAndCondition extends StatefulWidget {
   static String tag = 'TermAndCondition';
@@ -35,7 +38,7 @@ class _TermAndCondition extends State<TermAndCondition> {
     });
   }
 //---------------------------------------------------------------------------------------------------//
-  String TermAndConditionurl ='http://192.168.0.200/anuj/Dealseazy/Dealsezy/dealseazyApp/TermAndCondition.php';
+  String TermAndConditionurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/TermAndCondition.php';
   fetchTermAndConditionurl() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
@@ -191,38 +194,14 @@ class _TermAndCondition extends State<TermAndCondition> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     final AboutUs = new Padding(
-        padding: EdgeInsets.all(0.0),
-        child:   new Container(
-          color: Color(0xffFFFFFF),
-          child: Padding(
-            padding: EdgeInsets.only(top:10.0),
-            child: new Card(
-              color: Colors.white,
-              child: new Column(
-                children: <Widget>[
-                  new ListTile(
-                    leading: Icon(FontAwesomeIcons.addressCard,size: 30.0,color:ColorCode.TextColorCodeBlue,),
-
-                    title: new Text(
-                      "Term and Condition".toUpperCase(),textAlign: TextAlign.start,
-                      style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold,color: ColorCode.TextColorCodeBlue),
-                      ),
-                    //trailing: Icon(Icons.keyboard_arrow_right,color: ColorCode.TextColorCodeBlue,),
-
-                    subtitle: new Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Text(ReciveJsonData.toString(),overflow: TextOverflow.ellipsis,maxLines: 100,
-                                       style: new TextStyle(
-                                           fontSize: 13.0, fontWeight: FontWeight.normal,color: ColorCode.TextColorCodeBlue)),
-                        ]),
-                    )
-                ],
+        padding: EdgeInsets.all(10.0),
+        child:   new Center(
+          child: SingleChildScrollView(
+            child: Html(
+                data: ReciveJsonData.toString()
                 ),
-              ),
             ),
-          )
+          ),
         );
 //-------------------------------------------------------------------------------------------//
     return new WillPopScope(
