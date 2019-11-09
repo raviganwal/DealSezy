@@ -28,7 +28,7 @@ class GlobalString {
   static String Terms="Terms & Use";
   static String logout="logout";
 //-------------bottomNavigationBar-----------------------------------------------//
-  static String CHAT="CHAT";
+  static String CHAT="CHAT screen";
   static String EXPLORE="EXPLORE";
   static String SELL="SELL";
   static String MYADV="MYADV";
@@ -59,7 +59,7 @@ class GlobalString {
   static String AddImage="add image";
   static String DeleteImage="Delete";
   static String UploadImage="Upload Image";
-  static String SendImage="send";
+  static String SendImage="Update";
   static String Camerabtn="camera";
   static String Camera="Take a picture";
   static String CameraString="Make a Choice!";
@@ -87,5 +87,9 @@ class GlobalString {
   static String PodtEdit="Post Edit";
   static String AboutUs="Abou Us";
   static String TermAndCondition="Term And Condition";
+  static String DeleteImageAlert="Confirm Message";
+  static String DeleteImageAlertContant="Do you Want to Delete This Image?";
+  static String ok="ok";
+  static String cancel="Cancel";
 
 }

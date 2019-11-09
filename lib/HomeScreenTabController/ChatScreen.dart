@@ -1,172 +1,241 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/TermAndCondition/TermAndCondition.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:dealsezy/ChatScreen/ChatMessage.dart';
+import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/GlobalString.dart';
-//-------------------------------------------------------------------------------------------------//
+import 'package:dealsezy/Preferences/Preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+//--------------------------------------------------------------------------------------//
 class ChatScreen extends StatefulWidget {
   static String tag = 'ChatScreen';
-
   @override
-  _ServiceState createState() => new _ServiceState();
+  State createState() => new ChatScreenState();
 }
+//--------------------------------------------------------------------------------------//
+class ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _textController = new TextEditingController();
+  final List<ChatMessage> _messages = <ChatMessage>[];
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController SendChatController = new TextEditingController();
+  final FocusNode myFocusNodeSendChat = FocusNode();
+  String AppReciveUserID="";
+  String AppReciveUserFullName="";
+  String errMessage = 'Error Send Data';
+  String status = '';
+//--------------------------------------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------//
+  String UpdatePostEdit ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AddChatMsg.php';
+  EditPostUpadte() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs1 = await SharedPreferences.getInstance();
+    AppReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
+    AppReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
 
-class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
-  TabController tabController;
+    http.post(UpdatePostEdit, body: {
+      "Token": GlobalString.Token,
+      "From_ID": AppReciveUserID.toString(),
+      "From_Name": AppReciveUserFullName.toString(),
+      "To_ID": AppReciveUserFullName.toString(),
+    }).then((resultUpadte) {
+      print("URL"+UpdatePostEdit.toString());
+      print("Token"+GlobalString.Token);
+      print("statusCode" + resultUpadte.statusCode.toString());
+      print("resultbody" + resultUpadte.body);
+      //return result.body.toString();
+//------------------------------------------------------------------------------------------------------------//
+      setStatus(resultUpadte.statusCode == 200 ? resultUpadte.body : errMessage);
+      var data = json.decode(resultUpadte.body);
+      //ReciveJsonStatus = data["STATUS"].toString();
+      //print("STATUS" + ReciveJsonStatus.toString());
 
-  @override
-  void initState() {
+
+    }).catchError((error) {
+      setStatus(error);
+    });
   }
-
+//---------------------------------------------------------------------------------------------------//
+  setStatus(String message) {
+    setState(() {
+      status = message;
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    tabController = new TabController(length: 3, vsync: this);
-
-    var tabBarItem = new TabBar(
-      tabs: [
-        new Tab(
-          //icon: new Icon(Icons.list),
-          text: "ALL",
-          ),
-        new Tab(
-          // icon: new Icon(Icons.grid_on),
-          text: "BUYING",
-          ),
-        new Tab(
-          // icon: new Icon(Icons.grid_on),
-          text: "SELLING",
-          ),
-      ],
-      controller: tabController,
-      indicatorColor: Colors.white,
-      labelColor: Colors.white,
-      );
-
-    var ALL;
-    ALL = new Padding(
-      padding: const EdgeInsets.only(bottom:2.0),
-      child: new GestureDetector(
-        onTap: () {
-          //Navigator.of(context).pushNamed(StudentDetail.tag);
-        },
-        child: new Card(
-        color: Colors.white,
-        child: new Column(
-          children: <Widget>[
-            new ListTile(
-              leading: Image.network(
-                'https://gravitinfosystems.com/MDNS/uploads/s-l1000.jpg',
-                height: 250.0,
-                width: 50.0,
-                ),
-
-              title: new Text(
-                "AKASH GUPTA".toUpperCase(),textAlign: TextAlign.start,
-                style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold,color: ColorCode.TextColorCodeBlue),
-                ),
-              trailing: new Text(
-                "CHATNOW".toUpperCase(),textAlign: TextAlign.start,
-                style: new TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold,color: ColorCode.TextColorCodeBlue),
-                ),
-              subtitle: new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new Text('01-10-2019',
-                                  style: new TextStyle(
-                                      fontSize: 13.0, fontWeight: FontWeight.normal,color: ColorCode.TextColorCodeBlue)),
-                            ]),
-              )
-          ],
-          ),
-        ),
-        ),
-      );
-
-    var Buying;
-    Buying = new Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: new GestureDetector(
-        onTap: () {
-          //Navigator.of(context).pushNamed(StudentDetail.tag);
-        },
-        child: new Card(
+//--------------------------------------------------------------------------------------//
+    final ChatLayOut =  new  Stack(
+      children: <Widget>[
+        Container(
           color: Colors.white,
-          child: new Column(
+          child: Column(
             children: <Widget>[
-              new ListTile(
-                leading: Image.network(
-                  'https://gravitinfosystems.com/MDNS/uploads/s-l1000.jpg',
-                  height: 250.0,
-                  width: 50.0,
+              Flexible(
+                child: ListView.builder(
+                  itemCount: 1,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'Today',
+                            style:
+                            TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          Bubble(
+                            message: 'i am fine !',
+                            isMe: false,
+                            ),
+                          Bubble(
+                            message: 'yes i\'ve seen the docs',
+                            isMe: false,
+                            ),
+                          Text(
+                            'Feb 25, 2018',
+                            style:
+                            TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          Bubble(
+                            message: 'Hi How are you ?',
+                            isMe: true,
+                            ),
+                          Bubble(
+                            message: 'have you seen the docs yet?',
+                            isMe: true,
+                            ),
+                        ],
+                        ),
+                      );
+                  },
                   ),
-
-                title: new Text(
-                  "AKASH GUPTA".toUpperCase(),textAlign: TextAlign.start,
-                  style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold,color: ColorCode.TextColorCodeBlue),
-                  ),
-                trailing: new Text(
-                  "CHATNOW".toUpperCase(),textAlign: TextAlign.start,
-                  style: new TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold,color: ColorCode.TextColorCodeBlue),
-                  ),
-                subtitle: new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Text('01-10-2019',
-                                   style: new TextStyle(
-                                       fontSize: 13.0, fontWeight: FontWeight.normal,color: ColorCode.TextColorCodeBlue)),
-                    ]),
-                )
+                ),
             ],
             ),
           ),
-        ),
-      );
-
-
-    final GlobalKey<ScaffoldState> _scaffoldKey =
-    new GlobalKey<ScaffoldState>();
-
-    return new DefaultTabController(
-      length: 2,
-      child: new Scaffold(
-        drawer: _drawer(),
-        appBar: new AppBar(
-          title: Text(GlobalString.CHAT.toUpperCase(),style: TextStyle(
-              fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold),),
-          iconTheme: new IconThemeData(color: Colors.white),
-          centerTitle: true,
-          bottom: tabBarItem,
-          actions: <Widget>[
-            new IconButton(
-              padding: new EdgeInsets.all(15.0),
-              icon: new Icon(
-                Icons.notifications,
-                color: Colors.white,
+        Positioned(
+          bottom: 0,
+          left: 0,
+          width: MediaQuery.of(context).size.width,
+          child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                color: Colors.grey[300],
+                offset: Offset(-2, 0),
+                blurRadius: 5,
                 ),
-              onPressed: null,
+            ]),
+            child: Row(
+              children: <Widget>[
+                /*IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.camera,
+                    color: Color(0xff3E8DF3),
+                    ),
+                  ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.image,
+                    color: Color(0xff3E8DF3),
+                    ),
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(left: 15),
+                  ),*/
+                Expanded(
+                  child: TextFormField(
+                    controller: SendChatController,
+                    focusNode: myFocusNodeSendChat,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Message',
+                      border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.send,
+                    color: Color(0xff3E8DF3),
+                    ),
+                  ),
+              ],
               ),
-          ],
-          ),
-
-        body: new TabBarView(
-          controller: tabController,
-          children: [
-            new ListView(shrinkWrap: true, children: <Widget>[ALL]),
-            new ListView(shrinkWrap: true, children: <Widget>[Buying,Buying]),
-            new ListView(shrinkWrap: true, children: <Widget>[ALL,ALL,ALL,ALL,ALL,ALL,ALL]),
-          ],
-          ),
-
-        ),
+            ),
+          )
+      ],
       );
+//--------------------------------------------------------------------------------------//
+    return new WillPopScope(
+        onWillPop: () async {
+      Future.value(
+          false); //return a `Future` with false value so this route cant be popped or closed.
+    },
+    child:  Scaffold(
+      drawer: _drawer(),
+      key: _scaffoldKey,
+      appBar: AppBar(
+        iconTheme: new IconThemeData(color: Colors.white),
+        title: Text(GlobalString.CHAT.toUpperCase(),style: TextStyle(color: ColorCode.TextColorCode),),
+        centerTitle: true,
+        actions: <Widget>[
+          new Stack(
+            children: <Widget>[
+              new IconButton(
+                padding: new EdgeInsets.all(15.0),
+                icon: new Icon(
+                  Icons.notifications,
+                  color: Colors.white,
+                  ),
+                /*onPressed: () {
+                    //print("hello"+id.toString());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CategoryTotalAddList(
+                            value: Userid.toString(),
+                            )),
+                      );
+                  },*/
+                ),
+              new Positioned(
+                  child: new Stack(
+                    children: <Widget>[
+                      new Icon(null),
+                      new Positioned(
+                          top: 5.0,
+                          right: 5,
+                          child: new Center(
+                            child: new Text(
+                              "".toString(),
+                              style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500),
+                              ),
+                            )),
+                    ],
+                    )),
+            ],
+            ),
+        ],
+        ),
+      backgroundColor: Colors.white,
+      body: ChatLayOut,),
+        );
   }
+//--------------------------------------------------------------------------------------//
   Widget _drawer() {
     return new Drawer(
         elevation: 20.0,
@@ -175,13 +244,13 @@ class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
           children: <Widget>[
             UserAccountsDrawerHeader(
 
-              accountName: Text("Mr. "+"Akash Gupta".toUpperCase(),style: TextStyle(
+              accountName: Text("Mr. "+"".toUpperCase(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
                   backgroundColor: Colors.transparent,
                   fontWeight: FontWeight.bold),),
-              accountEmail: Text("gupta.akash555@gmail.com",style: TextStyle(
+              accountEmail: Text("".toString(),style: TextStyle(
                   fontSize: 16.0,
                   color: ColorCode.TextColorCode,
                   letterSpacing: 1.4,
@@ -279,7 +348,7 @@ class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
                 ),
               title: Text(GlobalString.logout.toUpperCase(),style: TextStyle( fontSize: 15.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),),
               onTap: () {
-                //Navigator.of(context).pushNamed(Help.tag);
+                //TapMessage(context, "Logout!");
               },
               ),
             Divider(
@@ -287,5 +356,86 @@ class _ServiceState extends State<ChatScreen> with TickerProviderStateMixin {
               ),
           ],
           ));
+  }
+//--------------------------------------------------------------------------------------//
+}
+class Bubble extends StatelessWidget {
+  final bool isMe;
+  final String message;
+
+  Bubble({this.message, this.isMe});
+
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: isMe ? EdgeInsets.only(left: 40) : EdgeInsets.only(right: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  gradient: isMe
+                      ? LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      stops: [
+                        0.1,
+                        1
+                      ],
+                      colors: [
+                        Color(0xFFF6D365),
+                        Color(0xFFFDA085),
+                      ])
+                      : LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      stops: [
+                        0.1,
+                        1
+                      ],
+                      colors: [
+                        Color(0xFFEBF5FC),
+                        Color(0xFFEBF5FC),
+                      ]),
+                  borderRadius: isMe
+                      ? BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(0),
+                    bottomLeft: Radius.circular(15),
+                    )
+                      : BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(0),
+                    ),
+                  ),
+                child: Column(
+                  crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      message,
+                      textAlign: isMe ? TextAlign.end : TextAlign.start,
+                      style: TextStyle(
+                        color: isMe ? Colors.white : Colors.grey,
+                        ),
+                      )
+                  ],
+                  ),
+                ),
+            ],
+            )
+        ],
+        ),
+      );
   }
 }

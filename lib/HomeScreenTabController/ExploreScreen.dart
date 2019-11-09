@@ -92,7 +92,7 @@ class ExploreScreenState extends State<ExploreScreen>{
   List<Posts> _searchCategory = [];
   List data;
   String ProductName="";
-  var loading = false;
+  var loading = true;
   String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
   String GetLoginUserID="";
   String status = '';
@@ -132,7 +132,7 @@ class ExploreScreenState extends State<ExploreScreen>{
       setState(() {
         for (Map i in data) {
           _list.add(MyAdvsPosts.formJson(i));
-          // loading = false;
+           loading = false;
         }
       });
     }).catchError((error) {
@@ -167,7 +167,7 @@ class ExploreScreenState extends State<ExploreScreen>{
       setState(() {
         for (Map i in dataCategory) {
           _listCategory.add(Posts.formJson(i));
-          // loading = false;
+          loading = false;
         }
       });
     }).catchError((error) {
@@ -336,56 +336,65 @@ class ExploreScreenState extends State<ExploreScreen>{
         ),
       );
 //----------------------------------------------------------------------------------------------//
-    final headerList =  GridView.builder(
-        itemCount: _listCategory.length,
-      scrollDirection: Axis.vertical,
-      controller: ScrollController(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1.5,
+    final headerList =  new Container(
+      child: Column(
+        children: <Widget>[
+          loading
+              ? Center(
+            child: CircularProgressIndicator(),
+            )
+              : Expanded(
+            child: GridView.builder(
+              itemCount: _listCategory.length,
+              scrollDirection: Axis.vertical,
+              controller: ScrollController(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.5,
 
-        mainAxisSpacing: 2.0,
-        crossAxisSpacing: 2.0,
-        ),
-        itemBuilder: (context, i) {
-          final b = _listCategory[i];
-          Cat_ID = b.Cat_ID.toString();
-          // print("Cat_ID"+Cat_ID);
-          return new Container(
-            child: new GestureDetector(
-              onTap: () {
-              //  print("Cat_ID"+b.Cat_ID.toString().toString());
-                setState(() {
-                  Cat_ID = b.Cat_ID.toString(); //if you want to assign the index somewhere to check
-                //  print("CatID"+b.Cat_ID.toString());
-                });
-                var route = new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  new HomeScreenSubCategory(
-                      value: b.Cat_ID.toString(),
-                      value2: " ${ b.Cat_ID.toString() }"),
-                  );
-                Navigator.of(context).push(route);
-              },
-              child: Center(
-                child: GridTile(
-                  footer: Text(
-                    b.Cat_Name.toUpperCase(),
-                    textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
-                                                                   fontSize: 9,
-                                                                   letterSpacing: 0.27,),
-                    ),
-                  /* header: Text(
-            'SubItem',
-            textAlign: TextAlign.center,
-            ),*/
-                  child: Icon(_categories[i]['icon'],size: 30.0,color:ColorCode.TextColorCodeBlue,),
-                  ),
+                mainAxisSpacing: 2.0,
+                crossAxisSpacing: 2.0,
                 ),
+                itemBuilder: (context, i) {
+                  final b = _listCategory[i];
+                  Cat_ID = b.Cat_ID.toString();
+                  // print("Cat_ID"+Cat_ID);
+                  return new Container(
+                    child: new GestureDetector(
+                      onTap: () {
+                        //  print("Cat_ID"+b.Cat_ID.toString().toString());
+                        setState(() {
+                          Cat_ID = b.Cat_ID.toString(); //if you want to assign the index somewhere to check
+                          //  print("CatID"+b.Cat_ID.toString());
+                        });
+                        var route = new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          new HomeScreenSubCategory(
+                              value: b.Cat_ID.toString(),
+                              value2: " ${ b.Cat_ID.toString() }"),
+                          );
+                        Navigator.of(context).push(route);
+                      },
+                      child: Center(
+                        child: GridTile(
+                          footer: Text(
+                            b.Cat_Name.toUpperCase(),
+                            textAlign: TextAlign.center,style: TextStyle(color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.normal,
+                                                                           fontSize: 9,
+                                                                           letterSpacing: 0.27,),
+                            ),
+                          child: Icon(_categories[i]['icon'],size: 30.0,color:ColorCode.TextColorCodeBlue,),
+                          ),
+                        ),
+                      ),
+                    margin: EdgeInsets.all(1.0),
+                    );
+                }
               ),
-            margin: EdgeInsets.all(1.0),
-            );
-        });
+            ),
+        ],
+        ),
+      );
 
 //---------------------------------------------------------------------------------------------//
     return new WillPopScope(

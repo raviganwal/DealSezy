@@ -41,9 +41,9 @@ class _EditPostImageScreen extends State<EditPostImage> {
   bool ReciveJsonStatus ;
   String Cat_ID ='';
   String ReciveJsonImageId ='';
-  String GetImageId ='';
+  var GetImageId ='';
   bool  ImageDeleted ;
-  var loading = false;
+  var loading = true;
   List<Posts> _searchCategory = [];
   String imageurl = 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/';
   String ReciveJsonRECID ='';
@@ -77,7 +77,7 @@ class _EditPostImageScreen extends State<EditPostImage> {
       setState(() {
         for (Map i in data) {
           _list.add(Posts.formJson(i));
-          // loading = false;
+          loading = false;
         }
       });
     }).catchError((error) {
@@ -123,7 +123,12 @@ class _EditPostImageScreen extends State<EditPostImage> {
       FalseImageDialog();
     }else if(ImageDeleted == true){
       print("true");
-      TrueImageDialog();
+      var route = new MaterialPageRoute(
+        builder: (BuildContext context) =>
+        new EditPostImage(
+            value1: " ${widget.value1.toString()}"),
+        );
+      Navigator.of(context).push(route);
     }
   }
 
@@ -175,7 +180,7 @@ class _EditPostImageScreen extends State<EditPostImage> {
       );
   }
 //------------------------------------------------------------------------------------------//
-  Future<void> TrueImageDialog() async {
+ /* Future<void> TrueImageDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -220,7 +225,7 @@ class _EditPostImageScreen extends State<EditPostImage> {
           );
       },
       );
-  }
+  }*/
   //------------------------------------------------------------------------------------------//
   Future<void> NoDataAvilable() async {
     return showDialog<void>(
@@ -326,6 +331,60 @@ class _EditPostImageScreen extends State<EditPostImage> {
       },
       );
   }
+
+  //--------------------------------------------------------------------------------------------------------//
+  Future<void> _DeleteProductItemAlert() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(GlobalString.DeleteImageAlert, textAlign: TextAlign.center,
+                        style: new TextStyle(fontSize: 15.0,
+                                                 color: ColorCode.TextColorCodeBlue,
+                                                 fontWeight: FontWeight.bold),),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(GlobalString.DeleteImageAlertContant,
+                       textAlign: TextAlign.center,
+                       style: new TextStyle(fontSize: 12.0,
+                                                color: ColorCode.TextColorCodeBlue,
+                                                fontWeight: FontWeight.bold),),
+              ],
+              ),
+            ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(GlobalString.cancel, style: new TextStyle(fontSize: 15.0,
+                                                                        color: ColorCode.TextColorCodeBlue,
+                                                                        fontWeight: FontWeight
+                                                                            .bold),),
+              ),
+            FlatButton(
+              onPressed: () {
+                setState(() {
+                     GetImageId = ( ReciveJsonImageId.toString());
+                  //if you want to assign the index somewhere to check
+                  print("OnTapAdv_Image_ID"+GetImageId.toString());
+                });
+                print("true");
+                DeleteImage();
+              },
+              child: Text(GlobalString.ok, style: new TextStyle(fontSize: 15.0,
+                                                         color: ColorCode.TextColorCodeBlue,
+                                                         fontWeight: FontWeight
+                                                             .bold),),
+              ),
+
+          ],
+          );
+      },
+      );
+  }
 //---------------------------------------------------------------------------------------------------//
   @override
   void initState() {
@@ -341,83 +400,91 @@ class _EditPostImageScreen extends State<EditPostImage> {
     double _width = width * 0.70;
     double height = MediaQuery.of(context).size.height;
     double _height = height * 0.85;
-    final headerList =  GridView.builder(
-        itemCount: _list.length,
-        padding: EdgeInsets.all(5.0),
-        scrollDirection: Axis.vertical,
-        controller: ScrollController(),
-        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2),
-        itemBuilder: (context, i) {
-          final b = _list[i];
-          ReciveJsonImageId = b.Adv_Image_ID.toString();
-          //print("ReciveJsonImageId"+ReciveJsonImageId);
-          return new Card(
-            child: Stack(
-              alignment: FractionalOffset.topLeft,
-              children: <Widget>[
-                new Stack(
-                  alignment: FractionalOffset.bottomCenter,
-                  children: <Widget>[
-                    new  AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.network(imageurl+b.ImageData,
-                                           fit: BoxFit.cover,
-                                         ),
-                      ),
-                  ],
-                  ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Container(
-                      height: 30.0,
-                      width: 60.0,
-                      decoration: new BoxDecoration(
-                          color: ColorCode.AppColorCode,
-                          borderRadius: new BorderRadius.only(
-                            topRight: new Radius.circular(5.0),
-                            bottomRight: new Radius.circular(5.0),
-                            )),
-                      child: new Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          new IconButton(
-                              icon: Icon(
-                                FontAwesomeIcons.trash,
-                                color: Colors.white,
-                                size: 15.0,
-                                ),
-                              onPressed: () {
-                                setState(() {
-                                  GetImageId = ( b.Adv_Image_ID.toString());
-                                  //if you want to assign the index somewhere to check
-                                  print("OnTapAdv_Image_ID"+GetImageId.toString());
-                                });
-                                print("true");
-                                DeleteImage();
-                              }),
+    final headerList =  new Container(
+      child: Column(
+        children: <Widget>[
+          loading
+              ? Center(
+            child: CircularProgressIndicator(),
+            )
+              : Expanded(
+            child: GridView.builder(
+                itemCount: _list.length,
+                padding: EdgeInsets.all(5.0),
+                scrollDirection: Axis.vertical,
+                controller: ScrollController(),
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (context, i) {
+                  final b = _list[i];
+                  ReciveJsonImageId = b.Adv_Image_ID.toString();
+                  //print("ReciveJsonImageId"+ReciveJsonImageId);
+                  return new Card(
+                    child: Stack(
+                      alignment: FractionalOffset.topLeft,
+                      children: <Widget>[
+                        new Stack(
+                          alignment: FractionalOffset.bottomCenter,
+                          children: <Widget>[
+                            new  AspectRatio(
+                              aspectRatio: 1,
+                              child: Image.network(imageurl+b.ImageData,
+                                                     fit: BoxFit.cover,
+                                                   ),
+                              ),
+                          ],
+                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            new Container(
+                              height: 30.0,
+                              width: 60.0,
+                              decoration: new BoxDecoration(
+                                  color: ColorCode.AppColorCode,
+                                  borderRadius: new BorderRadius.only(
+                                    topRight: new Radius.circular(5.0),
+                                    bottomRight: new Radius.circular(5.0),
+                                    )),
+                              child: new Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  new IconButton(
+                                      icon: Icon(
+                                        FontAwesomeIcons.trash,
+                                        color: Colors.white,
+                                        size: 15.0,
+                                        ),
+                                      onPressed: () {
+                                        _DeleteProductItemAlert();
+                                      }),
 
-                          /*new Text(
+                                  /*new Text(
                       "x",
                       style: new TextStyle(color: Colors.white),
                       )*/
-                        ],
-                        ),
-                      ),
-                   /*new IconButton(
+                                ],
+                                ),
+                              ),
+                            /*new IconButton(
                   icon: Icon(
                     Icons.favorite_border,
                     color: Colors.blue,
                     ),
                   onPressed: () {})*/
-                  ],
-                  )
-              ],
-              ),
-            );
-        });
+                          ],
+                          )
+                      ],
+                      ),
+                    );
+                }
+                ),
+            ),
+        ],
+        ),
+      );
+
 //---------------------------------------------------------------------------------------------------//
     Future<Null> BackScreen() async {
       setState(() {

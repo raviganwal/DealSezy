@@ -88,12 +88,18 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       throw 'Could not Call Phone';
     }
   }
+  addStringToSF() async {
+    SharedPreferences prefsPostReciveData = await SharedPreferences.getInstance();
+    prefsPostReciveData.setString('stringValue', ReciveJsonAdv_ID);
+    print("stringValue"+prefsPostReciveData.setString('stringValue', ReciveJsonAdv_ID).toString());
+  }
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvView.php';
 
   fetchPost() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     AppReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
+
     http.post(url, body: {
       "Token": GlobalString.Token,
       "Adv_ID": widget.value1.toString(),
@@ -127,25 +133,6 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         JsonReciveLast_Name = data[0]["Last_Name"].toString();
         JsonReciveMobile = data[0]["Mobile"].toString();
         JsonReciveFullName = data[0]["First_Name"].toString()+" "+data[0]["Last_Name"].toString();
-//-------------------------------------------------------------------------------//
-          /* print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
-           print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
-           print("ReciveJsonSubCat_ID"+ReciveJsonSubCat_ID.toString());
-           print("ReciveTitle"+ReciveTitle.toString());
-           print("RecivePrice"+RecivePrice.toString());
-           print("ReciveDescription"+ReciveDescription.toString());
-           print("ReciveFeatures"+ReciveFeatures.toString());
-           print("ReciveCondition"+ReciveCondition.toString());*/
-          // print("ReciveReasonofSelling"+ReciveReasonofSelling.toString());
-        /*   print("JsonReciveUser_ID"+JsonReciveUser_ID.toString());
-           print("RecivePost_Time"+RecivePost_Time.toString());
-           print("ReciveVisible_To"+ReciveVisible_To.toString());
-           print("ReciveStatus"+ReciveStatus.toString());*/
-
-        print("First_Name"+JsonReciveFirst_Name.toString());
-        print("Last_Name"+JsonReciveLast_Name.toString());
-        print("JsonReciveMobile"+JsonReciveMobile.toString());
-        print("JsonReciveFullName"+JsonReciveFullName.toString());
 //-------------------------------------------------------------------------------//
         this._CheckBtnsChatEdit();
 //-------------------------------------------------------------------------------//
@@ -288,6 +275,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
     this._checkInternetConnectivity();
     this.fetchPost();
     this.fetchImagePost();
+    this.addStringToSF();
   }
 //----------------------------------------------------------------------------------------//
 
@@ -342,9 +330,10 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
             children: <Widget>[
 //--------------------------------------------------------------------------------------------//
               new SizedBox(
-                height: 10.0,
+                height: 0.0,
                 ),
               Container(
+                color: Colors.white70,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -356,7 +345,6 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       autoPlay: true,
                       reverse: false,
                       enableInfiniteScroll: false,
-
                       autoPlayInterval: Duration(seconds: 1),
                       autoPlayAnimationDuration: Duration(milliseconds: 1000),
                       pauseAutoPlayOnTouch: Duration(seconds: 1),
@@ -380,7 +368,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                                 ),
                               child: Image.network(
                                 'http://gravitinfosystems.com/Dealsezy/dealseazyApp/${imgUrl.imageData}',
-                                fit: BoxFit.contain,
+                                fit: BoxFit.cover,
                                 ),
                               );
                           },
@@ -697,24 +685,14 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       label: Text(GlobalString.Chat.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                       ),
                     ),
-                flex: 2,
+                flex: 1,
                 ),),
-              Visibility(
-                visible: _visibleCallNow,
-                child: new Expanded(
-                  child: Container(
-                    color: Colors.transparent,
-                    width: 10.0,
-                    height:50,
-                   /* child: FlatButton.icon(
-                      onPressed: () => _callPhone(),
-                      color: ColorCode.AppColorCode,
-                      icon: Icon(Icons.phone,color: Colors.white,), //`Icon` to display
-                      label: Text(GlobalString.Call.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
-                      ),*/
-                    ),
-                  flex: 0,
-                  ),),
+              //-------------------------------------------------------------------//
+              new Container(
+                color: ColorCode.TextColorCode,
+                height: 50.0,
+                width: 0.5,
+                ),
 //-------------------------------------------------------------------//
               Visibility(
                 visible: _visibleCallNow,
@@ -730,7 +708,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       label: Text(GlobalString.Call.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                       ),
                     ),
-                  flex: 3,
+                  flex: 1,
                   ),),
 //-------------------------------------------------------------------//
               Visibility(
@@ -759,7 +737,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                       label: Text(GlobalString.EditPodt.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),
                       ),
                     ),
-                  flex: 1,
+                  flex: 2,
                   ),),
 //-------------------------------------------------------------------//
             ],

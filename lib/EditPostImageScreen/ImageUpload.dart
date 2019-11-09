@@ -1,27 +1,30 @@
-import 'dart:io';
+
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/SellScreenDetails/DiplaySellAddPostScreen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dealsezy/Preferences/Preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:async/async.dart';
-import 'package:path/path.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/GlobalString.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:async/async.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as Img;
+
+import 'dart:math' as Math;
+
 //------------------------------------------------------------------------------------------//
-class Palette1 {
-  static Color greenLandLight1 = Color(0xFF222B78);
-}
-class Palette2 {
-  static Color greenLandLight2 = Color(0xFFE0318C);
-}
 //-------------------------------------------------------------------------------------------//
 class ImageUpload extends StatefulWidget {
   static String tag = 'ImageUpload';
@@ -66,25 +69,50 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 //-------------------------------------------------------------------------------------------//
   Future getImageFromCam() async { // for camera
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    var imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    final tempDir =await getTemporaryDirectory();
+    final path = tempDir.path;
+
+    int rand= new Math.Random().nextInt(1);
+
+    Img.Image image2= Img.decodeImage(imageFile.readAsBytesSync());
+    Img.Image smallerImg = Img.copyResizeCropSquare(image2, 500);
+
+    var compressImg= new File("$path/image_$rand.jpg")
+      ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 85));
+
     setState(() {
-      _image = image;
-      print("getImageFromCam"+_image.toString());
+      _image = compressImg;
+      print("getImageFromCamera"+_image.toString());
     });
   }
 //-------------------------------------------------------------------------------------------//
-  Future getImageFromGallery() async {// for gallery
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future getImageGallery() async{
+    var imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    final tempDir =await getTemporaryDirectory();
+    final path = tempDir.path;
+
+    int rand= new Math.Random().nextInt(1);
+
+    Img.Image image1= Img.decodeImage(imageFile.readAsBytesSync());
+    Img.Image smallerImg = Img.copyResizeCropSquare(image1, 500);
+
+    var compressImg= new File("$path/image_$rand.jpg")
+      ..writeAsBytesSync(Img.encodeJpg(smallerImg, quality: 85));
+
+
     setState(() {
-      _image = image;
+      _image = compressImg;
       print("getImageFromGallery"+_image.toString());
     });
   }
 //---------------------------------------------------------------------------------------------------//
 
   Future Upload(File imageFile) async {
-    var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
-    var length = await imageFile.length();
+    var stream= new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    var length= await imageFile.length();
 
     var uri = Uri.parse("http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvImageAdd.php");
     final response =
@@ -98,22 +126,25 @@ class _ImageUploadState extends State<ImageUpload> {
 
     print("Token"+request.fields['Token'].toString());
     print("Adv_ID"+request.fields['Adv_ID'].toString());
-    var multipartFile =  new http.MultipartFile("image", stream,length,filename: basename(imageFile.path));
+    var multipartFile = new http.MultipartFile("image", stream, length, filename: basename(imageFile.path));
+    //var imagelength = await imageFile.length();
    // print("response"+response.body.toString());
     request.files.add(multipartFile);
 
     var respone = await request.send();
     print(response.toString());
 
-    if (respone.statusCode==200) {
+    if(response.statusCode==200){
       print("Image Uploaded");
+    }else{
+      print("Upload Failed");
     }
-    else{
-      print("Image Failed");
-    }
+   /* response.stream.transform(utf8.decoder).listen((value) {
+      print(value);
+    });*/
   }
 //-------------------------------------------------------------------------------------------//
-  void _showDialog(BuildContext context) {
+/*  void _showDialog(BuildContext context) {
     setState(() {
       dialog = true;
     });
@@ -169,7 +200,7 @@ class _ImageUploadState extends State<ImageUpload> {
       // When task is over, close the dialog
       Navigator.of(context, rootNavigator: false).pop();
     });
-  }
+  }*/
 //-------------------------------------------------------------------------------------------//
   void  _displaySnackbar(BuildContext context) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -310,30 +341,24 @@ class _ImageUploadState extends State<ImageUpload> {
             ),
         ],
         ),
-        body: ListView(
-          children: [
-            /* new SizedBox(
-              height: 2.0,
-              ),*/
-            new SizedBox(
-              height: 10.0,
-              ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.grey[200],
-              height: 200.0,
+        body: SingleChildScrollView(
+         child:Column(
+           children: <Widget>[
+             SizedBox(
+               height: 2.0,
+             ),
+             Container(
+               width: MediaQuery.of(context).size.width,
+               color: Colors.grey[200],
+               child: Center(
+                 child: _image == null
+                     ? Image.asset("assets/images/noimage.jpg")
+                     : Image.file(_image),
 
-              child: Center(
-                child: _image == null
-                    ? Text('No image selected.')
-                    : Image.file(_image),
-
-                ),
-              ),
-            new SizedBox(
-              height: 10.0,
-              ),
-          ],
+                 ),
+               ),
+           ],
+         ),
           ),
         bottomNavigationBar: BottomAppBar(
           child: new Row(
@@ -341,6 +366,8 @@ class _ImageUploadState extends State<ImageUpload> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+
+//------------------------------------------------------------------------------------------//
               Expanded(
                 child: Container(
                   height: 50,
@@ -348,20 +375,46 @@ class _ImageUploadState extends State<ImageUpload> {
                   child: new FlatButton.icon(
                     //color: Colors.red,
                     icon: Icon(FontAwesomeIcons.camera,color: Colors.white,), //`Icon` to display
-                      label: Text(GlobalString.Camerabtn.toUpperCase().toString(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+                      label: Text("".toUpperCase().toString(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                       onPressed: () {
-                        _showDialog(context);
-                       /*_displaySnackbar(context);
-                        Upload(_image);
-                        Navigator.of(context).pushNamed(HomeScreen.tag);*/
-                        //print("hello");
-                        // model.removeProduct(model.cart[index]);
+                        getImageFromCam();
                       },
                     ),
 
                   ),
-                flex: 2,
+                flex: 0,
                 ),
+//----------------------------------------------------------------------------------------------------------//
+              new Container(
+                color: ColorCode.TextColorCode,
+                height: 50.0,
+                width: 0.5,
+                ),
+//----------------------------------------------------------------------------------------------------------//
+              Expanded(
+                child: Container(
+                  height: 50,
+                  color:ColorCode.TextColorCodeBlue,
+                  child: new FlatButton.icon(
+                    //color: Colors.red,
+                    icon: Icon( FontAwesomeIcons.solidImage,
+                                  color: Colors.white,), //`Icon` to display
+                      label: Text("".toUpperCase(),textAlign: TextAlign.left,style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
+                      onPressed: () {
+                        getImageGallery();
+                      },
+                    ),
+
+                  ),
+                flex: 0,
+                ),
+//----------------------------------------------------------------------------------------------------------//
+              new Container(
+                color: ColorCode.TextColorCode,
+                height: 50.0,
+                width: 0.5,
+                ),
+//----------------------------------------------------------------------------------------------------------//
               Expanded(
                 child: Container(
                   height: 50,
@@ -374,7 +427,7 @@ class _ImageUploadState extends State<ImageUpload> {
                       label: Text(GlobalString.SendImage.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                       onPressed: () {
                         _displaySnackbar(context);
-                        Upload(_image);
+                         Upload(_image);
                         _SignupAlert(context);
                         //Navigator.of(context).pushNamed(DiplaySellAddPostScreen.tag);
                         //print("hello");
@@ -385,6 +438,7 @@ class _ImageUploadState extends State<ImageUpload> {
                   ),
                 flex: 3,
                 ),
+//----------------------------------------------------------------------------------------------------------//
             ],
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:dealsezy/Model/LoginModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:core';
 
@@ -10,14 +11,14 @@ class Preferences {
   static var KEY_FullName = "FullName";
 
 
-  storeDataAtLogin(data) async {
+  storeDataAtLogin(LoginModel data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(KEY_UserID, data["JSONDATA"]['USER_ID']);
-    prefs.setString(KEY_UserStatus, data["JSONDATA"]['Status']);
-    prefs.setString(KEY_FirstNAME, data["JSONDATA"]['First Name']);
-    prefs.setString(KEY_LastNAME, data["JSONDATA"]['Last Name']);
-    prefs.setString(KEY_Email, data["JSONDATA"]['Email']);
-    prefs.setString(KEY_FullName, data["JSONDATA"]['First_Name']+""+data["JSONDATA"]['Last_Name']);
+    prefs.setString(KEY_UserID, data.jSONDATA.uSERID);
+    prefs.setString(KEY_UserStatus, data.jSONDATA.status);
+    prefs.setString(KEY_FirstNAME, data.jSONDATA.firstName);
+    prefs.setString(KEY_LastNAME, data.jSONDATA.lastName);
+    prefs.setString(KEY_Email, data.jSONDATA.email);
+    prefs.setString(KEY_FullName, data.jSONDATA.firstName+""+data.jSONDATA.lastName);
 
    /* print("KEY_UserID"+data["JSONDATA"]["USER_ID"].toString());
     print("KEY_UserStatus"+data["JSONDATA"]["Status"].toString());
@@ -26,7 +27,12 @@ class Preferences {
     print("LastName"+data["JSONDATA"]['Last Name']);
     print("KEY_Email"+data["JSONDATA"]['Email']);
     print("KEY_FullName"+data["JSONDATA"]['First Name']+""+data["JSONDATA"]['Last Name']);*/
-    print("KEY_FullName"+data["JSONDATA"]['First_Name']+""+data["JSONDATA"]['Last_Name']);
+    //print("KEY_FullName"+data["JSONDATA"]['First_Name']+""+data["JSONDATA"]['Last_Name']);
 
+  }
+
+  addStringToSF() async {
+    SharedPreferences prefsPostReciveData = await SharedPreferences.getInstance();
+    prefsPostReciveData.setString('stringValue', "ReciveJsonAdv_ID");
   }
 }

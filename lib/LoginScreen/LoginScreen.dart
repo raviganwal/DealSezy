@@ -1,4 +1,5 @@
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
+import 'package:dealsezy/Model/LoginModel.dart';
 import 'package:dealsezy/SignUpScreen/SignUpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:dealsezy/LoginScreen/widgets/custom_shape.dart';
@@ -39,16 +40,14 @@ class _MyAppState extends State<LoginScreen> {
   String Password;
   String errMessage = 'Error Send Data';
   String status = '';
-  String ReciveJsonStatus ='';
-  String ReciveJsonMSG ='';
   String ReciveJsonUserID ='';
   var ReciveUserStatus="";
   var ReciveUserID="";
-  var data;
   var ReciveUserFirstName ="";
   var ReciveUserLastName ="";
   var ReciveUserEmail ="";
   var ReciveUserFullName ="";
+  var data;
 //---------------------------------------------------------------------------------------------------//
   /*Future<Null> BackScreen() async {
     Navigator.of(context).pushNamed(LoginScreen.tag);
@@ -290,58 +289,32 @@ class _MyAppState extends State<LoginScreen> {
     ReciveUserID = prefs.getString(Preferences.KEY_UserID).toString();
     ReciveUserEmail = prefs.getString(Preferences.KEY_Email).toString();
     ReciveUserFullName = prefs.getString(Preferences.KEY_FullName).toString();
-    //print("ReciveUserFullName"+prefs.getString(Preferences.KEY_FullName).toString());
+    print("ReciveUserID"+prefs.getString(Preferences.KEY_UserID).toString());
     http.post(url, body: {
       "Email": SignupEmailController.text,
       "Password": SignupPasswordController.text,
       "Token": GlobalString.Token
     }).then((result) {
-      //print("uploadEndPoint"+url.toString());
-      //print("FirstName" + SignupEmailController.text);
-      //print("LastName" +   SignupPasswordController.text);
-      //print("Token" + GlobalString.Token);
-      //print("statusCode" + result.statusCode.toString());
-      //print("resultbody" + result.body);
-      //return result.body.toString();
 //------------------------------------------------------------------------------------------------------------//
       setStatus(result.statusCode == 200 ? result.body : errMessage);
-      data = json.decode(result.body);
+      print("jsonresp ${result.body}");
 
-      //print("ReciveData"+data.toString());
-
-
-      ReciveJsonStatus = data["Status"].toString();
-      ReciveJsonMSG = data["MSG"].toString();
-
-      ReciveUserStatus =data["JSONDATA"]["Status"].toString();
-      ReciveUserID =data["JSONDATA"]["USER_ID"].toString();
-
-      ReciveUserFirstName =data["JSONDATA"]["First Name"].toString();
-      ReciveUserLastName =data["JSONDATA"]["Last Name"].toString();
-      ReciveUserFullName =data["JSONDATA"]["First Name"].toString()+ " "+data["JSONDATA"]["Last Name"].toString();
-      ReciveUserEmail =data["JSONDATA"]["Email"].toString();
-
-
-      /*    print("ReciveUserStatus" + ReciveUserStatus.toString());
-      print("ReciveUserID" + ReciveUserID.toString());*/
-      /* print("ReciveUserFirstName" + ReciveUserFirstName.toString());
-      print("ReciveUserLastName" + ReciveUserLastName.toString());
-      print("ReciveUserEmail" + ReciveUserEmail.toString());
-      print("ReciveUserFullName" + ReciveUserFullName.toString());*/
-
-      _handleSubmitted();
+       data = json.decode(result.body);
+      if(!data['Status']) {
+        _SignInFailedAlert();
+        return;
+      }
+      LoginModel loginModel = LoginModel.fromJson(data);
+      _success(loginModel);
 
     }).catchError((error) {
       setStatus(error);
     });
   }
 //------------------------------------------------------------------------------------------------------------//
-  void _handleSubmitted() {
-    if(ReciveJsonStatus == "true"){
-      //print("kk"+ReciveJsonStatus);
-      if(ReciveUserStatus == 'Active'){
-        new Preferences().storeDataAtLogin(data);
-        //print("jjj"+ReciveJsonMSG);
+  void _success(LoginModel loginModel) {
+      if(loginModel.jSONDATA.status == 'Active'){
+        new Preferences().storeDataAtLogin(loginModel);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -349,27 +322,16 @@ class _MyAppState extends State<LoginScreen> {
               )),
           );
       }
-    }else if(ReciveJsonStatus == "false"){
-      _SignInFailedAlert();
-      print(ReciveJsonMSG);
-    }
   }
 //------------------------------------------------------------------------------------------------------------//
   _sendToServer() {
     if (_key.currentState.validate()) {
-      // No any error in validation
       _key.currentState.save();
-      /*print("True");
-      print("sendToServerSignupEmail"+SignupEmailController.text);
-      print("sendToServerSignupPassword"+SignupPasswordController.text);*/
       GetLogin();
     } else {
       // validation error
       setState(() {
         _validate = true;
-        /*print("False");
-         print("Email"+SignupEmailController.text.toString());
-         print("Password"+SignupPasswordController.text.toString());*/
       });
     }
   }
@@ -393,7 +355,7 @@ class _MyAppState extends State<LoginScreen> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(ReciveJsonMSG.toString(),
+                Text(data['MSG'].toString(),
                        textAlign: TextAlign.center,
                        style: new TextStyle(fontSize: 12.0,
                                                 color: ColorCode.TextColorCodeBlue,
