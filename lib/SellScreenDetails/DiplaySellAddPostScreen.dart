@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:dealsezy/ChatScreen/ChatMessage.dart';
 import 'package:dealsezy/Components/ColorCode.dart';
 import 'package:dealsezy/Components/GlobalString.dart';
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
 import 'package:dealsezy/EditPostScreen/EditPost.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
+import 'package:dealsezy/HomeScreenTabController/ChatScreen.dart';
 import 'package:dealsezy/Model/SliderImageImageModel.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -88,11 +90,6 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       throw 'Could not Call Phone';
     }
   }
-  addStringToSF() async {
-    SharedPreferences prefsPostReciveData = await SharedPreferences.getInstance();
-    prefsPostReciveData.setString('stringValue', ReciveJsonAdv_ID);
-    print("stringValue"+prefsPostReciveData.setString('stringValue', ReciveJsonAdv_ID).toString());
-  }
 //---------------------------------------------------------------------------------------------------//
   String url ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AdvView.php';
 
@@ -114,7 +111,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
       setState(() {
         var extractdata = json.decode(result.body);
         data = extractdata["JSONDATA"];
-         print("ReciveData"+data.toString());
+         //print("ReciveData"+data.toString());
 //-------------------------------------------------------------------------------//
         ReciveJsonAdv_ID = data[0]["Adv_ID"].toString();
         ReciveJsonCat_ID = data[0]["Cat_ID"].toString();
@@ -180,10 +177,6 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
   }
 //---------------------------------------------------------------------------------------------------------//
   void _CheckBtnsChatEdit() {
-    // print("Function equal");
-   // print("ReciveUserIDApp"+AppReciveUserID);
-  //  print("JsonReciveUser_ID"+JsonReciveUser_ID);
-
     if(AppReciveUserID.toString() == JsonReciveUser_ID){
       setState(() {
         _visibleEditBtn = !_visibleEditBtn;
@@ -191,7 +184,7 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
         _visibleEditPostBtn = !_visibleEditPostBtn;
       });
     }else if(AppReciveUserID.toString() != JsonReciveUser_ID.toString()){
-      print("Condition Not equal");
+      //print("Condition Not equal");
       setState(() {
         _visibleChatBtn = !_visibleChatBtn;
         _visibleCallNow = !_visibleCallNow;
@@ -275,7 +268,6 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
     this._checkInternetConnectivity();
     this.fetchPost();
     this.fetchImagePost();
-    this.addStringToSF();
   }
 //----------------------------------------------------------------------------------------//
 
@@ -679,7 +671,24 @@ class _DiplaySellAddPostScreen extends State<DiplaySellAddPostScreen> {
                     width: MediaQuery.of(context).size.width,
                     height:50,
                     child: FlatButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                        /* print("ReciveTitle"+data[0]["Title"].toString());
+                         print("JsonReciveFullName"+data[0]["First_Name"].toString()+" "+data[0]["Last_Name"].toString());
+                         print("User_ID"+data[0]["User_ID"].toString());
+                         print("Adv_ID"+data[0]["Adv_ID"].toString());*/
+                        });
+                        var route = new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          new ChatMessage(
+                              value1: data[0]["Title"].toString(),
+                              value2: data[0]["First_Name"].toString()+""+data[0]["Last_Name"].toString(),
+                              value3: data[0]["User_ID"].toString(),
+                              value4: data[0]["Adv_ID"].toString()
+                              ),
+                          );
+                        Navigator.of(context).push(route);
+                      },
                       color: ColorCode.AppColorCode,
                       icon: Icon(FontAwesomeIcons.solidComment,color: Colors.white,), //`Icon` to display
                       label: Text(GlobalString.Chat.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)),

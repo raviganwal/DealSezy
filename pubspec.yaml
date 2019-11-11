@@ -36,6 +36,7 @@ dependencies:
   carousel_pro: ^1.0.0
   flutter_html: ^0.11.0
   path_provider: "^1.4.0"
+  toast: ^0.1.5
 
 
 
@@ -73,6 +74,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/AllCategory.png
     - assets/images/noimage.jpg
+    - assets/images/communication.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

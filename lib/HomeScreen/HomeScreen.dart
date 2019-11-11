@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         //size: 15.0,
                         ),
                       SizedBox(height:5.0),
-                      new Text(GlobalString.CHAT,
+                      new Text(GlobalString.CHAT1,
                                    style: new TextStyle(fontSize: 9.0,color: ColorCode.TextColorCode,fontWeight: FontWeight.normal,
                                                         ))
                     ],

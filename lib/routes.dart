@@ -1,5 +1,6 @@
 import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
 import 'package:dealsezy/CategoriesScreen/Categories.dart';
+import 'package:dealsezy/ChatScreen/ChatMessage.dart';
 import 'package:dealsezy/EditPostImageScreen/EditPostImage.dart';
 import 'package:dealsezy/EditPostImageScreen/ImageUpload.dart';
 import 'package:dealsezy/EditPostScreen/EditPost.dart';
@@ -54,5 +55,6 @@ final routes = {
   EditPost.tag: (context) => EditPost(),
   SeeAllScreen.tag: (context) => SeeAllScreen(),
   AboutUsScreen.tag: (context) => AboutUsScreen(),
-  TermAndCondition.tag: (context) => TermAndCondition()
+  TermAndCondition.tag: (context) => TermAndCondition(),
+  ChatMessage.tag: (context) => ChatMessage()
 };

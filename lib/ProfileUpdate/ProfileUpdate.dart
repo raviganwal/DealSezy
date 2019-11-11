@@ -775,8 +775,8 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                     label: Text(GlobalString.UpdateProfileBtn.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                    onPressed: () {
                        _displaySnackbar(context);
+                       ProfileImageUpload(_image);
                         uploadProfileUpadte();
-                        ProfileImageUpload(_image);
                         _ProfileUpdateAlert(context);
                     },
                   ),

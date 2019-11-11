@@ -29,6 +29,7 @@ class GlobalString {
   static String logout="logout";
 //-------------bottomNavigationBar-----------------------------------------------//
   static String CHAT="CHAT screen";
+  static String CHAT1="CHAT";
   static String EXPLORE="EXPLORE";
   static String SELL="SELL";
   static String MYADV="MYADV";
