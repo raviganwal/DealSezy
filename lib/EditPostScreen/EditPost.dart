@@ -31,7 +31,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
   var ReciveUserID="";
   String errMessage = 'Error Send Data';
   String status = '';
-
+  GlobalKey<FormState> _key = new GlobalKey();
   String ReciveTitle ='';
   String RecivePrice ='';
   String ReciveDescription ='';
@@ -47,7 +47,16 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
   String ReciveStatus ='';
   String AppReciveUserID="";
   var ReciveJsonStatus ='';
+  bool _validate = false;
 
+  String Title= "";
+  String Price= "";
+  String Description= "";
+  String Features= "";
+  String Condition= "";
+  String Reason= "";
+
+  ScrollController _scrollController = new ScrollController();
   TextEditingController TitleController = new TextEditingController();
   TextEditingController PriceController = new TextEditingController();
   TextEditingController DescriptionController = new TextEditingController();
@@ -162,7 +171,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
   //------------------------------------------------------------------------------------------------------------//
   void  _displaySnackbar(BuildContext context) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 1),
       content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
       backgroundColor: ColorCode.AppColorCode,
       ));
@@ -331,334 +340,153 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
 
-
-    final ProfileData = new Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: new Column(
+    Widget FormUI() {
+      return new Column(
         children: <Widget>[
           new Container(
-            color: Color(0xffFFFFFF),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15.0),
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-//------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Title'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: TitleController,
-                              focusNode: myFocusNodeTitle,
-                              decoration: InputDecoration(
-                                hintText: ReciveTitle.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.adn,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Price'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              keyboardType: TextInputType.number,
-                              controller: PriceController,
-                              focusNode: myFocusNodePrice,
-                              decoration: InputDecoration(
-                                hintText: RecivePrice.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.rupeeSign,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Description'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller:DescriptionController,
-                              focusNode: myFocusNodeDescription,
-                              decoration: InputDecoration(
-                                hintText: ReciveDescription.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.info,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Feature'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: FeaturesController,
-                              focusNode: myFocusNodeFeatures,
-                              decoration: InputDecoration(
-                                hintText:ReciveFeatures.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.solidQuestionCircle,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Condition'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: ConditionController,
-                              focusNode: myFocusNodeCondition,
-                              decoration: InputDecoration(
-                                hintText: ReciveCondition.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.atlassian,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Reason of selling'.toUpperCase(),
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: ReasonController,
-                              focusNode: myFocusNodeReason,
-                              decoration: InputDecoration(
-                                hintText: ReciveReasonofSelling.toString(),
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.shopware,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//------------------------------------------------------------------------------------------//
-                ],
-                ),
+            height: _height,
+            child: new ListView(
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              controller: _scrollController,
+              shrinkWrap: true,
+              children: <Widget>[
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeTitle,
+                  controller: TitleController,
+                  validator: validateTitle,
+                  onSaved: (String val) {
+                    Title = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Title',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveTitle.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.adn,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                TextFormField(
+                  focusNode: myFocusNodePrice,
+                  controller: PriceController,
+                  validator: validatePrice,
+                  keyboardType: TextInputType.number,
+                  onSaved: (String val) {
+                    Price = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Price',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: RecivePrice.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.rupeeSign, color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeDescription,
+                  controller: DescriptionController,
+                  keyboardType: TextInputType.text,
+                  validator: validateDescription,
+                  onSaved: (String val) {
+                    Description = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Description',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveDescription.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.info,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeFeatures,
+                  controller: FeaturesController,
+                  keyboardType: TextInputType.text,
+                  validator: validateFeatures,
+                  onSaved: (String val) {
+                    Features = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Features',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveFeatures.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.solidQuestionCircle,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeCondition,
+                  controller: ConditionController,
+                  keyboardType: TextInputType.text,
+                  validator: validateCondition,
+                  onSaved: (String val) {
+                    Condition = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Condition',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveCondition.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.solidQuestionCircle,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 15.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeReason,
+                  controller: ReasonController,
+                  keyboardType: TextInputType.text,
+                  validator: validateReason,
+                  onSaved: (String val) {
+                    Reason = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Reason of Selling',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveReasonofSelling.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(FontAwesomeIcons.atlassian,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+              ],
               ),
-            )
+            ),
         ],
-        ),
-      );
+        );
+    }
 //---------------------------------------------------------------------------------------------//
     return Scaffold(
       key:_scaffoldKey,
@@ -679,11 +507,23 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
         ],
         ),
       // backgroundColor:ColorCode.AppColorCode,
-      body: new ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          ProfileData,
-        ],
+      //-------------------------------------------------------------------------------------//
+      body: new Container(
+        child: SingleChildScrollView(
+          child: new Form(
+            key: _key,
+            autovalidate: _validate,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 10.0,
+                  ),
+                FormUI(),
+              ],
+              ),
+            //child: FormUI(),
+            ),
+          ),
         ),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
@@ -700,8 +540,7 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
                   icon: Icon(FontAwesomeIcons.solidEdit,color: Colors.white,), //`Icon` to display
                     label: Text(GlobalString.PodtEdit.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
                     onPressed: () {
-                      _displaySnackbar(context);
-                      EditPostUpadte();
+                      _sendToServer(context);
                     },
                   ),
 
@@ -712,6 +551,87 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
           ),
         ),
       );
+  }
+  _sendToServer(BuildContext context) async {
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      _key.currentState.save();
+      print("true");
+    _displaySnackbar(context);
+      EditPostUpadte();
+    } else {
+      // validation error
+      setState(() {
+        print("Faield");
+        _validate = true;
+      });
+    }
+  }
+//-------------------------------------------------------------------------------------------------//
+  String validateTitle(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Title is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Title must be Need";
+    }
+    return null;
+  }
+//-------------------------------------------------------------------------------------------------//
+  String validatePrice(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Price is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Price must be Need";
+    }
+    return null;
+  }
+  //-------------------------------------------------------------------------------------------------//
+  String validateDescription(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Description is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Description must be Need";
+    }
+    return null;
+  }
+  //-------------------------------------------------------------------------------------------------//
+  String validateFeatures(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Features is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Features must be Need";
+    }
+    return null;
+  }
+  //-------------------------------------------------------------------------------------------------//
+  String validateCondition(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Condition is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Condition must be Need";
+    }
+    return null;
+  }
+  //-------------------------------------------------------------------------------------------------//
+  String validateReason(String value) {
+    String patttern = '';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Reason of Selling is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Reason of Selling must be Need";
+    }
+    return null;
   }
 }
 

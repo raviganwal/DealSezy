@@ -31,7 +31,7 @@ class SellScreenState extends State<SellScreen>{
   List<Posts> _search = [];
   List data;
   String ProductName="";
-  var loading = false;
+  var loading = true;
   String status = '';
   String errMessage = 'Error Send Data';
   String ReciveJsonStatus ='';
@@ -67,7 +67,7 @@ class SellScreenState extends State<SellScreen>{
       setState(() {
         for (Map i in data) {
           _list.add(Posts.formJson(i));
-          // loading = false;
+          loading = false;
         }
       });
 
@@ -215,7 +215,10 @@ class SellScreenState extends State<SellScreen>{
     final _width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 //----------------------------------------------------------------------------------------------//
-    final headerList =  GridView.builder(
+    final headerList =  loading
+        ? Center(
+      child: CircularProgressIndicator(),
+      ): GridView.builder(
       itemCount: _list.length,
       scrollDirection: Axis.vertical,
       controller: ScrollController(),

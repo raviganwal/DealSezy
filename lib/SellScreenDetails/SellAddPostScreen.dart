@@ -240,7 +240,7 @@ class _MyAppState extends State<SellAddPostScreen> {
 //------------------------------------------------------------------------------------------------------------//
   void  _displaySnackbar(BuildContext context) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 1),
       content: Text('Please Wait........',style: TextStyle(color: ColorCode.TextColorCode),),
       backgroundColor: ColorCode.AppColorCode,
       ));
@@ -554,66 +554,66 @@ class _MyAppState extends State<SellAddPostScreen> {
   }
 //----------------------------------------------------------------------------------------------------------------------//
   String validateTitle(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Title is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Title must be a-z and A-Z";
+      return "Title must Need";
     }
     return null;
   }
 //----------------------------------------------------------------------------------------------------------------------//
   String validateDescription(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Description is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Description must be a-z and A-Z";
+      return "Description must be Need";
     }
     return null;
   }
 //----------------------------------------------------------------------------------------------------------------------//
   String validateFeatures(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Features is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Features must be a-z and A-Z";
+      return "Features must be Need";
     }
     return null;
   }
 //----------------------------------------------------------------------------------------------------------------------//
   String validateCondition(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Condition is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Condition must be a-z and A-Z";
+      return "Condition must be Need";
     }
     return null;
   }
 //----------------------------------------------------------------------------------------------------------------------//
   String validateReasonofSelling(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Reason of Selling is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Reason of Selling must be a-z and A-Z";
+      return "Reason of Selling must be Need";
     }
     return null;
   }
   String validateVisible_To(String value) {
-    String patttern = r'(^[a-zA-Z ]*$)';
+    String patttern = '';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Reason of Visible_To is Required";
     } else if (!regExp.hasMatch(value)) {
-      return "Reason of Visible_To must be a-z and A-Z";
+      return "Reason of Visible_To must be Need";
     }
     return null;
   }

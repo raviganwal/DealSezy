@@ -31,10 +31,7 @@ class ChatMessage extends StatefulWidget {
 //--------------------------------------------------------------------------------------//
 class ChatMessageState extends State<ChatMessage> {
   final TextEditingController _textController = new TextEditingController();
-  final List<ChatMessage> _messages = <ChatMessage>[];
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  TextEditingController SendChatController = new TextEditingController();
-  final FocusNode myFocusNodeSendChat = FocusNode();
   String AppReciveUserID="";
   String AppReciveUserFullName="";
   String ReciveUserEmail="";
@@ -48,6 +45,8 @@ class ChatMessageState extends State<ChatMessage> {
   List<ChatReciveDataModel> _ChatListMessage = [];
   var loading = true;
   ScrollController _scrollController = new ScrollController();
+  var ChangePageFinalReciveNotEqualMessage;
+  var ChangePageFinalReciveMessage;
 //--------------------------------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------//
   String UpdatePostEdit ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/AddChatMsg.php';
@@ -63,7 +62,7 @@ class ChatMessageState extends State<ChatMessage> {
       "From_Name": AppReciveUserFullName.toString(),
       "To_ID": widget.value3.toString(),
       "To_Name": widget.value2.toString(),
-      "Message": SendChatController.text.toString(),
+      "Message": _textController.text.toString(),
       "Adv_ID": widget.value4.toString(),
       "Adv_Title": widget.value1.toString()
     }).then((resultUpadte) {
@@ -76,7 +75,7 @@ class ChatMessageState extends State<ChatMessage> {
       print("AppUserFullName" + AppReciveUserFullName.toString());
       print("PostUserID" + widget.value3.toString());
       print("PostUserName" +widget.value2.toString());
-      print("Message" + SendChatController.text.toString());
+      print("Message" + _textController.text.toString());
       print("Adv_ID" + widget.value4.toString());
       print("Adv_Title" + widget.value1.toString());
       //return result.body.toString();
@@ -85,8 +84,8 @@ class ChatMessageState extends State<ChatMessage> {
       var data = json.decode(resultUpadte.body);
       //ReciveJsonStatus = data["STATUS"].toString();
       //print("STATUS" + ReciveJsonStatus.toString());
-
-
+      _textController.clear();
+     // _textController.text;
     }).catchError((error) {
       setStatus(error);
     });
@@ -109,9 +108,9 @@ class ChatMessageState extends State<ChatMessage> {
       setStatus(ResultReciveChatData.statusCode == 200 ? ResultReciveChatData.body : errMessage);
       //print("jsonresp ${ResultReciveChatData.body}");
       data = json.decode(ResultReciveChatData.body);
-      //print("ReciveData ${data.toString()}");
+     print("ReciveData ${data.toString()}");
       ReciveDataFromJson =data["data"];
-      print("ReciveDataFromJson ${ReciveDataFromJson.toString()}");
+      //print("ReciveDataFromJson ${ReciveDataFromJson.toString()}");
 
       setState(() {
         for (Map i in ReciveDataFromJson) {
@@ -131,61 +130,9 @@ class ChatMessageState extends State<ChatMessage> {
 //-------------------------------------------------------------------------------------------//
   @override
   void initState() {
-    // this._checkInternetConnectivity();
+  // this._checkInternetConnectivity();
     super.initState();
     this.ReciveChatData();
-  }
-//------------------------------------------------------------------------------------------//
-  Future<void> ChatMessageDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Message Sent", textAlign: TextAlign.center,
-                        style: new TextStyle(fontSize: 15.0,
-                                                 color: ColorCode.TextColorCodeBlue,
-                                                 fontWeight: FontWeight.bold),),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text("Message Sent Successfully...",
-                       textAlign: TextAlign.center,
-                       style: new TextStyle(fontSize: 12.0,
-                                                color: ColorCode.TextColorCodeBlue,
-                                                fontWeight: FontWeight.bold),),
-              ],
-              ),
-            ),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                setState(() {
-                  //ReciveJsonRECID =widget.value2.toString(); //if you want to assign the index somewhere to check//if you want to assign the index somewhere to check
-                  // print("CatID"+widget.value2.toString());
-                  print("hello"+widget.value1.toString());
-                });
-                var route = new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                  new ChatMessage(
-                      value1:widget.value1.toString(),
-                      value2:widget.value2.toString(),
-                      value3:widget.value3.toString(),
-                      value4:widget.value4.toString()
-
-                      ),
-                  );
-                Navigator.of(context).push(route);
-              },
-              child: Text('Ok', style: new TextStyle(fontSize: 15.0,
-                                                         color: ColorCode.TextColorCodeBlue,
-                                                         fontWeight: FontWeight
-                                                             .bold),),
-              ),
-          ],
-          );
-      },
-      );
   }
 //---------------------------------------------------------------------------------------------------//
   setStatus(String message) {
@@ -193,132 +140,48 @@ class ChatMessageState extends State<ChatMessage> {
       status = message;
     });
   }
-  _onClear() {
-    setState(() {
-      SendChatController.text = "";
-    });
-  }
+  //---------------------------------------------------------------------------------------------------//
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
-
     double height = MediaQuery.of(context).size.height;
-    double yourheight = height * 0.70;
-
-    final ChatLayOut = new  Stack(
-      children: <Widget>[
-        Container(
-          color: Colors.white,
-          child: Column(
+    Timer(Duration(milliseconds: 1), () => _scrollController.jumpTo(_scrollController.position.maxScrollExtent));
+    Widget _textComposerWidget() {
+      return new IconTheme(
+        data: new IconThemeData(color: ColorCode.TextColorCodeBlue),
+        child: new Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: new Row(
             children: <Widget>[
-              Flexible(
-                child: ListView.builder(
-                  itemCount: _ChatListMessage == null ? 0 : _ChatListMessage.length,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, i) {
-                    final ChatUserMessage = _ChatListMessage[i];
-                    FinalReciveFrom_ID = ChatUserMessage.From_ID;
-                    FinalReciveMessage = ChatUserMessage.Message;
-                    //print("AppReciveUserID= "+AppReciveUserID);
-                    //print("FinalReciveFrom_ID= "+FinalReciveFrom_ID);
-
-                    if(AppReciveUserID == FinalReciveFrom_ID ){
-                     // print("FinalReciveEqualMessage");
-                      FinalReciveMessage = ChatUserMessage.Message.toString();
-                     // print("FinalReciveEqualMessage= "+FinalReciveMessage.toString());
-
-
-
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              ChatUserMessage.Message_TIME,
-                              style:
-                              TextStyle(color: Colors.grey, fontSize: 12),
-                              ),
-                            Bubble(
-                              message:FinalReciveMessage.toString(),
-                              isMe: false,
-                              ),
-                          ],
-                          ),
-                        );
-                    }
-
-
-//-----------------------------------------------------------------------------------------------//
-                    else if(AppReciveUserID != FinalReciveFrom_ID){
-                      FinalReciveNotEqualMessage = ChatUserMessage.Message.toString();
-                      //print("FinalReciveNotEqualMessage"+FinalReciveNotEqualMessage);
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              ChatUserMessage.Message_TIME,
-                              style:
-                              TextStyle(color: Colors.grey, fontSize: 12),
-                              ),
-                            Bubble(
-                              message:FinalReciveNotEqualMessage.toString(),
-                              isMe: true,
-                              ),
-                          ],
-                          ),
-                        );
-                    }
-                  },
+              new Flexible(
+                child: new TextField(
+                  decoration:
+                  new InputDecoration.collapsed(hintText: "Send a message"),
+                  controller: _textController,
+                  //onSubmitted: _handleSubmitted,
+                  //onSubmitted: EditPostUpadte(),
                   ),
                 ),
+              new Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: new IconButton(
+                  icon: new Icon(Icons.send,color: ColorCode.AppColorCode,),
+                  onPressed: () {
+                    EditPostUpadte();
+                    Toast.show("Message Sent   "+_textController.text.toString(), context, duration: Toast.LENGTH_SHORT, gravity:  Toast.CENTER);
+                  }
+                  ),
+                )
             ],
             ),
           ),
-      ],
-      );
-//--------------------------------------------------------------------------------------//
-    final SendMessage = new  Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-          color: Colors.grey[300],
-          offset: Offset(-2, 0),
-          blurRadius: 5,
-          ),
-      ]),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              controller: SendChatController,
-              focusNode: myFocusNodeSendChat,
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                hintText: 'Enter Message',
-                border: InputBorder.none,
-                ),
-              ),
-            ),
-          IconButton(
-            onPressed: () {
-              EditPostUpadte();
-
-            },
-            icon: Icon(
-              Icons.send,
-              color: ColorCode.AppColorCode,
-              ),
-            ),
-        ],
-        ),
-      );
+        );
+    }
 //--------------------------------------------------------------------------------------//
     return   Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: new IconThemeData(color: Colors.white),
-        title: Text(GlobalString.CHAT.toUpperCase(),style: TextStyle(color: ColorCode.TextColorCode),),
+        title: Text(widget.value2.toString().toUpperCase(),style: TextStyle(color: ColorCode.TextColorCode),),
         centerTitle: true,
         actions: <Widget>[
           new Stack(
@@ -365,26 +228,86 @@ class ChatMessageState extends State<ChatMessage> {
       backgroundColor: Colors.white,
       //body: ChatLayOut,
       //body: ChatLayOut,
-      body: new Container(
-        child: new Stack(
-          children: <Widget>[
-            new Padding(
-              padding: new EdgeInsets.only(top: 0.0),
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  new Container(
-                      height: yourheight, width: _width, child: ChatLayOut),
-                 new Container(
-                    //color: Colors.grey,
-                    width: _width, child: SendMessage),
-                ],
-                ),
+      body: new  Column(
+        children: <Widget>[
+          /*loading
+              ? Center(
+            child: CircularProgressIndicator(),
+            ):*/
+          new Flexible(
+            child: new ListView.builder(
+              controller: _scrollController,
+              padding: new EdgeInsets.all(8.0),
+              reverse: false,
+              itemCount: _ChatListMessage == null ? 0 : _ChatListMessage.length,
+              itemBuilder: (BuildContext context, i) {
+                final ChatUserMessage = _ChatListMessage[i];
+                FinalReciveFrom_ID = ChatUserMessage.From_ID;
+                FinalReciveMessage = ChatUserMessage.Message;
+                //print("AppReciveUserID= "+AppReciveUserID);
+                //print("FinalReciveFrom_ID= "+FinalReciveFrom_ID);
+
+                if(AppReciveUserID == FinalReciveFrom_ID ){
+                  // print("FinalReciveEqualMessage");
+                  FinalReciveMessage = ChatUserMessage.Message.toString();
+                  // print("FinalReciveEqualMessage= "+FinalReciveMessage.toString());
+
+
+
+                  return Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          ChatUserMessage.Message_TIME,
+                          style:
+                          TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        Bubble(
+                          message:FinalReciveMessage.toString(),
+                          isMe: false,
+                          ),
+                      ],
+                      ),
+                    );
+                }
+
+
+//-----------------------------------------------------------------------------------------------//
+                else if(AppReciveUserID != FinalReciveFrom_ID){
+                  FinalReciveNotEqualMessage = ChatUserMessage.Message.toString();
+                  //print("FinalReciveNotEqualMessage"+FinalReciveNotEqualMessage);
+                  return Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          ChatUserMessage.Message_TIME,
+                          style:
+                          TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        Bubble(
+                          message:FinalReciveNotEqualMessage.toString(),
+                          isMe: true,
+                          ),
+                      ],
+                      ),
+                    );
+                }
+              },
+
               ),
-          ],
-          ),
+            ),
+          new Divider(
+            height: 1.0,
+            ),
+          new Container(
+            decoration: new BoxDecoration(
+              color: Theme.of(context).cardColor,
+              ),
+            child: _textComposerWidget(),
+            ),
+        ],
         ),
       );
   }

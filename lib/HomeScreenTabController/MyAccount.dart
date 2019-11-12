@@ -62,13 +62,13 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
       //print("Token" + GlobalString.Token);
       //print("User_ID" +  ReciveUserID.toString());
       //print("statusCode" + resultMyProfile.statusCode.toString());
-     // print("resultbody" + resultMyProfile.body);
+      // print("resultbody" + resultMyProfile.body);
       //return result.body.toString();
       setStatus(resultMyProfile.statusCode == 200 ? resultMyProfile.body : errMessage);
       setState(() {
         var extractdata = json.decode(resultMyProfile.body);
-         data = extractdata["JSONDATA"];
-         print("ReciveData"+data.toString());
+        data = extractdata["JSONDATA"];
+        print("ReciveData"+data.toString());
 
         ReciveJsonUSER_ID = data[0]["USER_ID"].toString();
         ReciveJsonUSERFirstName = data[0]["First_Name"].toString();
@@ -81,11 +81,11 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
         ReciveJsonUSERStatus = data[0]["Status"].toString();
         ReciveJsonUSERFullName= data[0]["First_Name"]+ " " +data[0]["Last_Name"].toString();
 
-         //  print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
-           print("ReciveJsonUSERFirstName"+ReciveJsonUSERFirstName.toString());
-           print("ReciveJsonUSERLastName"+ReciveJsonUSERLastName.toString());
-           print("ReciveJsonUSERFullName"+ReciveJsonUSERFullName.toString());
-          /* print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
+        //  print("ReciveJsonUSER_ID"+ReciveJsonUSER_ID.toString());
+        print("ReciveJsonUSERFirstName"+ReciveJsonUSERFirstName.toString());
+        print("ReciveJsonUSERLastName"+ReciveJsonUSERLastName.toString());
+        print("ReciveJsonUSERFullName"+ReciveJsonUSERFullName.toString());
+        /* print("ReciveJsonUSEREmail"+ReciveJsonUSEREmail.toString());
            print("ReciveJsonUSERMobile"+ReciveJsonUSERMobile.toString());
            print("ReciveJsonUSERPassword"+ReciveJsonUSERPassword.toString());
            print("ReciveJsonUSEROrganization"+ReciveJsonUSEROrganization.toString());
@@ -119,33 +119,33 @@ class MyAccountState extends State<MyAccount> with SingleTickerProviderStateMixi
     final ProfileImagetab = new  Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: new Stack(fit: StackFit.loose, children: <Widget>[
-                         SizedBox(
-                        // height: 210,
-                           child: Column(
-                             children: [
-                               ListTile(
-                                 title: Text(ReciveJsonUSERFullName.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
-                                 leading: new Container(
-                                   height: 80.0,
-                                   width: 80.0,
-                                   /*decoration: new BoxDecoration(
+        SizedBox(
+          // height: 210,
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(ReciveJsonUSERFullName.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold)),
+                leading: new Container(
+                    height: 80.0,
+                    width: 80.0,
+                    /*decoration: new BoxDecoration(
                                      //color: const Color(0xff7c94b6),
                                      borderRadius: BorderRadius.all(const Radius.circular(00.0)),
                                      border: Border.all(color: const Color(0xFF28324E)),
                                      ),*/
-                                   child: new Image.network(imageurl+ReciveJsonUSERProfilePIC)
-                                 ),
-                                 subtitle: Text(GlobalString.Edit.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold, decoration: TextDecoration.underline,)),
-                                 onTap: () {
-                                   print("d");
-                                   Navigator.of(context).pushNamed(ProfileUpdate.tag);
-                                   // do something
-                                 },
-                                 ),
-                             ],
+                    child: new Image.network(imageurl+ReciveJsonUSERProfilePIC)
+                    ),
+                subtitle: Text(GlobalString.Edit.toUpperCase().toString(),style: TextStyle(fontSize: 13.0, color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold, decoration: TextDecoration.underline,)),
+                onTap: () {
+                  print("d");
+                  Navigator.of(context).pushNamed(ProfileUpdate.tag);
+                  // do something
+                },
+                ),
+            ],
 
-                           ),
-                       ),
+            ),
+          ),
       ]),
       );
 //---------------------------------------------------------------------------------------------------//

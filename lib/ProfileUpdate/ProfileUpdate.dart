@@ -49,7 +49,8 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   var ReciveJsonUSERProfilePIC='';
   bool dialog = false;
   File _image;
-
+  GlobalKey<FormState> _key = new GlobalKey();
+  bool _validate = false;
   TextEditingController FirstNameController = new TextEditingController();
   TextEditingController LastNameController = new TextEditingController();
   TextEditingController EmailController = new TextEditingController();
@@ -61,7 +62,8 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeMobile = FocusNode();
   final FocusNode myFocusNodeOrganization = FocusNode();
-  BuildContext _scaffoldContext;
+  String FirstName, LastName,Email,MobileNumber,Organization;
+  ScrollController _scrollController = new ScrollController();
 //----------------------------------------------------------------------------------------------//
   String UpdateProfileurl ='http://gravitinfosystems.com/Dealsezy/dealseazyApp/MyProfile.php';
   fetchMyProfileUpdate() async {
@@ -141,7 +143,7 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
             FlatButton(
               onPressed: () {
                 setState(() {
-                  Navigator.of(context).pushNamed(MyAccount.tag);
+                  Navigator.of(context).pop();
                 });
               },
               child: Text('Ok', style: new TextStyle(fontSize: 15.0,
@@ -404,334 +406,186 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
   @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
-
-    final ProfileImage = new Container(
-      height: 200.0,
-      color: Colors.white,
-      child: new Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Stack(fit: StackFit.loose, children: <Widget>[
-              new Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Container(
-                    color: Colors.grey[200],
-                    width: 140.0,
-                    height: 140.0,
-                    child: Center(
-                      child: _image == null
-                          ? Image.network(imageurl+ReciveJsonUSERProfilePIC)
-                          : Image.file(_image),
-
-                      ),
-                    ),
-                ],
-                ),
-              Padding(
-                  padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new CircleAvatar(
-                        backgroundColor: ColorCode.AppColorCode,
-                        radius: 25.0,
-                        child: new IconButton(
-                          icon: Icon(Icons.camera_alt),
-                          color: Colors.white,
-                          onPressed: () {
-                            print("Camera Start");
-                            _showDialog(context);
-                          },
-                          ),
-                        )
-                    ],
-                    )),
-            ]),
-            )
-        ],
-        ),
-      );
-
-    final ProfileData = new Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: new Column(
+    final _height = MediaQuery.of(context).size.height*0.85;
+//------------------------------------------------------------------------------------------------------------//
+    Widget FormUI() {
+      return new Column(
         children: <Widget>[
           new Container(
-            color: Color(0xffFFFFFF),
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 15.0),
+            height: _height,
+            child: new ListView(
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+             controller: _scrollController,
+              shrinkWrap: true,
+              children: <Widget>[
+                SizedBox(
+                  height: 10.0,
+                  ),
+//------------------------------------------------------------------------------------------------------------//
+            new Container(
+            height: 180.0,
+              color: Colors.white,
               child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: new Stack(fit: StackFit.loose, children: <Widget>[
+                      new Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'First Name',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: FirstNameController,
-                              focusNode: myFocusNodeFirstName,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSERFirstName,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.adn,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
+                          new Container(
+                            color: Colors.grey[200],
+                            width: 140.0,
+                            height: 140.0,
+                            child: Center(
+                              child: _image == null
+                                  ? Image.network(imageurl+ReciveJsonUSERProfilePIC)
+                                  : Image.file(_image),
+
                               ),
                             ),
                         ],
-                        )),
- //----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
+                        ),
+                      Padding(
+                          padding: EdgeInsets.only(top: 90.0, right: 100.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              new Text(
-                                'Last Name',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: LastNameController,
-                              focusNode: myFocusNodeLastName,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSERLastName,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
+                              new CircleAvatar(
+                                backgroundColor: ColorCode.AppColorCode,
+                                radius: 25.0,
+                                child: new IconButton(
+                                  icon: Icon(Icons.camera_alt),
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    print("Camera Start");
+                                    _showDialog(context);
                                   },
-                                  icon: Icon(
-                                    FontAwesomeIcons.solidUser,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
                                   ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-/*                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Email*',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
+                                )
                             ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: EmailController,
-                              focusNode: myFocusNodeEmail,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSEREmail,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    Icons.mail,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),*/
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Mobile Number',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              maxLength: 10,
-                              controller: MobileController,
-                              focusNode: myFocusNodeMobile,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSERMobile,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.phone,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
-//----------------------------------------------------------------------------------------------------------------//
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
-                                'Organization',
-                                style: TextStyle(
-                                    color: ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w600,fontSize: 15.0,
-                                    letterSpacing: 1.3),
-                                ),
-                            ],
-                            ),
-                        ],
-                        )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 5.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextFormField(
-                              controller: OrganizationController,
-                              focusNode: myFocusNodeOrganization,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                hintText: ReciveJsonUSEROrganization,
-                                fillColor:ColorCode.TextColorCodeBlue,
-                                hintStyle: TextStyle(color: ColorCode.TextColorCodeBlue,),
-                                suffixIcon: IconButton(
-                                  onPressed: (){
-                                    // _controller.clear();
-                                  },
-                                  icon: Icon(
-                                    FontAwesomeIcons.atlassian,
-                                    color: ColorCode.TextColorCodeBlue,
-                                    ),
-                                  ),
-                                ),
-                              //enabled: !_status,
-                              //autofocus: !_status,
-                              ),
-                            ),
-                        ],
-                        )),
+                            )),
+                    ]),
+                    )
                 ],
                 ),
               ),
-            )
+                SizedBox(height: 10.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeFirstName,
+                  controller: FirstNameController,
+                  validator: validateFirstName,
+                  onSaved: (String val) {
+                    FirstName = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter First Name',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveJsonUSERFirstName.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(Icons.person,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 10.0),
+//------------------------------------------------------------------------------------------------------------//
+                TextFormField(
+                  focusNode: myFocusNodeLastName,
+                  controller: LastNameController,
+                  validator: validateLastName,
+                  onSaved: (String val) {
+                    LastName = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Last Name',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveJsonUSERLastName.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(Icons.person, color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 10.0),
+//------------------------------------------------------------------------------------------------------------//
+             /*   new TextFormField(
+                  focusNode: myFocusNodeEmail,
+                  controller: EmailController,
+                  validator: validateEmail,
+                  onSaved: (String val) {
+                    Email = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Email',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: 'Email Address',labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.bold),
+                    prefixIcon: const Icon(Icons.email,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 10.0),*/
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeMobile,
+                  controller: MobileController,
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  validator: validateMobile,
+                  onSaved: (String val) {
+                    MobileNumber = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Mobile Number',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveJsonUSERMobile.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(Icons.phone_android,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+                SizedBox(height: 10.0),
+//------------------------------------------------------------------------------------------------------------//
+                new TextFormField(
+                  focusNode: myFocusNodeOrganization,
+                  controller: OrganizationController,
+                  keyboardType: TextInputType.phone,
+                  validator: validateOrganization,
+                  onSaved: (String val) {
+                    Organization = val;
+                  },
+                  decoration: new InputDecoration(
+                    border: new OutlineInputBorder(),
+                    hintText: 'Enter Organization',hintStyle: TextStyle(fontSize: 12.0, color:ColorCode.TextColorCodeBlue),
+                    //helperText: 'Keep it short, this is just a demo.',
+                    labelText: ReciveJsonUSEROrganization.toString(),labelStyle:
+                  new TextStyle(fontSize: 14.0, color:ColorCode.TextColorCodeBlue,fontWeight: FontWeight.w300),
+                    prefixIcon: const Icon(Icons.confirmation_number,  color:Color(0xFF0B3D57),),
+                    prefixText: ' ',
+                    //suffixText: 'USD',
+                    //suffixStyle: const TextStyle(color: Colors.green)
+                    ),
+                  ),
+              ],
+              ),
+            ),
         ],
-        ),
-      );
+        );
+    }
+
 //---------------------------------------------------------------------------------------------//
     return Scaffold(
       key: _scaffoldKey,
@@ -751,14 +605,25 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
               ),
           ],
           ),
-        // backgroundColor:ColorCode.AppColorCode,
-        body: new ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            ProfileImage,
-            ProfileData,
-          ],
+//-------------------------------------------------------------------------------------//
+      body: new Container(
+        child: SingleChildScrollView(
+          child: new Form(
+            key: _key,
+            autovalidate: _validate,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 10.0,
+                ),
+                FormUI(),
+              ],
+              ),
+            //child: FormUI(),
+            ),
           ),
+        ),
+//-------------------------------------------------------------------------------------//
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -773,14 +638,11 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
                   //color: Colors.red,
                   icon: Icon(FontAwesomeIcons.fileExport,color: Colors.white,), //`Icon` to display
                     label: Text(GlobalString.UpdateProfileBtn.toUpperCase(),style: TextStyle(fontSize: 15.0, color: Colors.white,fontWeight: FontWeight.bold,)), //`Text` to display
-                   onPressed: () {
-                       _displaySnackbar(context);
-                       ProfileImageUpload(_image);
-                        uploadProfileUpadte();
-                        _ProfileUpdateAlert(context);
-                    },
+                    //onPressed: _sendToServer(context),
+                  onPressed: (){
+                    _sendToServer(context);
+                  },
                   ),
-
                 ),
               //flex: 2,
               ),
@@ -788,6 +650,83 @@ class ProfileUpdateState extends State<ProfileUpdate> with SingleTickerProviderS
           ),
         ),
         );
+  }
+
+  //---------------------------------------------------------------------------------------------//
+  String validateFirstName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "First Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+  //----------------------------------------------------------------------------------------------------------------------//
+  String validateLastName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Last Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+  //----------------------------------------------------------------------------------------------------------------------//
+/*  String validateEmail(String value) {
+    String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return "Email is Required";
+    } else if(!regExp.hasMatch(value)){
+      return "Invalid Email";
+    }else {
+      return null;
+    }
+  }*/
+  //----------------------------------------------------------------------------------------------------------------------//
+  String validateMobile(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Mobile is Required";
+    } else if(value.length != 10){
+      return "Mobile number must 10 digits";
+    }else if (!regExp.hasMatch(value)) {
+      return "Mobile Number must be digits";
+    }
+    return null;
+  }
+//----------------------------------------------------------------------------------------------------------------------//
+  String validateOrganization(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Organization is Required";
+    }else if (!regExp.hasMatch(value)) {
+      return "Organization Number must be digits";
+    }
+    return null;
+  }
+//-------------------------------------------------------------------------------------------------------------------//
+  _sendToServer(BuildContext context) async {
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      _key.currentState.save();
+      print("true");
+      _displaySnackbar(context);
+      ProfileImageUpload(_image);
+       uploadProfileUpadte();
+      _ProfileUpdateAlert(context);
+    } else {
+      // validation error
+      setState(() {
+        print("Faield");
+        _validate = true;
+      });
+    }
   }
 }
 

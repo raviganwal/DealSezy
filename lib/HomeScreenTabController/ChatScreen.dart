@@ -1,4 +1,5 @@
 import 'package:dealsezy/AboutUs/AboutUsScreen.dart';
+import 'package:dealsezy/ChatScreen/ChatMessage.dart';
 import 'package:dealsezy/HomeScreen/HomeScreen.dart';
 import 'package:dealsezy/HomeScreenTabController/SellScreen.dart';
 import 'package:dealsezy/Model/ChatReciveDataModel.dart';
@@ -17,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dealsezy/Preferences/Preferences.dart';
 //-------------------------------------------------------------------------------------------//
 class ChatScreen extends StatefulWidget {
+
   static String tag = 'ChatScreen';
   final String value;
 //-------------------------------------------------------------------------------------------//
@@ -26,6 +28,7 @@ class ChatScreen extends StatefulWidget {
 }
 //-------------------------------------------------------------------------------------------//
 class _ChatScreen extends State<ChatScreen> {
+
   var data;
   var RecivedataFromServer;
   String categoryid;
@@ -37,7 +40,11 @@ class _ChatScreen extends State<ChatScreen> {
   var ReciveUserFullName="";
   var ReciveUserID="";
   var ReciveAdv_Title="";
-  //final List<String> products;
+
+  var JsonReciveTo_ID="";
+  var JsonReciveTo_Name="";
+  var JsonReciveAdv_ID="";
+  var JsonReciveAdv_Title="";
 //---------------------------------------------------------------------------------------------------//
   setStatus(String message) {
     setState(() {
@@ -55,15 +62,15 @@ class _ChatScreen extends State<ChatScreen> {
       "Token": GlobalString.Token,
       "UserID": ReciveUserID.toString()
     }).then((result) {
-       print("uploadEndPoint"+ChatReciveurl.toString());
+      /* print("uploadEndPoint"+ChatReciveurl.toString());
        print("Token" + GlobalString.Token);
        print("UserID" +  ReciveUserID.toString());
-       print("statusCode" + result.statusCode.toString());
+       print("statusCode" + result.statusCode.toString());*/
        //print("resultbody" + result.body);
       //return result.body.toString();
       setStatus(result.statusCode == 200 ? result.body : errMessage);
 
-       print("jsonresp ${result.body}");
+       //print("jsonresp ${result.body}");
        data = json.decode(result.body);
 
        RecivedataFromServer =data["data"];
@@ -212,22 +219,37 @@ class _ChatScreen extends State<ChatScreen> {
               itemCount: _ChatReciveDatalist == null ? 0 : _ChatReciveDatalist.length,
               itemBuilder: (context, i) {
                 final ReciveData = _ChatReciveDatalist[i];
+                JsonReciveTo_ID = ReciveData.toID.toString();
+                JsonReciveTo_Name = ReciveData.toName.toString();
+                JsonReciveAdv_ID = ReciveData.advID.toString();
+                JsonReciveAdv_Title = ReciveData.advTitle.toString();
+
+                /*print("JsonReciveTo_ID"+JsonReciveTo_ID.toString());
+                print("JsonReciveTo_Name"+JsonReciveTo_Name.toString());
+                print("JsonReciveAdv_ID"+JsonReciveAdv_ID.toString());
+                print("JsonReciveAdv_Title"+JsonReciveAdv_Title.toString());*/
                 return new Container(
                   child: new GestureDetector(
-                 /*   onTap: () {
-                      // print("Cat_ID"+a.Cat_ID.toString().toString());
+                   onTap: () {
+                     print("JsonReciveTo_ID"+JsonReciveTo_ID.toString());
+                     print("JsonReciveTo_Name"+JsonReciveTo_Name.toString());
+                     print("JsonReciveAdv_ID"+JsonReciveAdv_ID.toString());
+                     print("JsonReciveAdv_Title"+JsonReciveAdv_Title.toString());
                       setState(() {
-                        Cat_ID = a.Cat_ID.toString(); //if you want to assign the index somewhere to check
-                        // print("CatID"+a.Cat_ID.toString());
+                        JsonReciveTo_ID = ReciveData.toID.toString(); //if you want to assign the index somewhere to check
+                         print("JsonReciveTo_ID"+JsonReciveTo_ID.toString());
                       });
                       var route = new MaterialPageRoute(
                         builder: (BuildContext context) =>
-                        new SubCategoryItem(
-                            value: a.Cat_ID.toString(),
-                            value2: " ${ a.Cat_ID.toString() }"),
+                        new ChatMessage(
+                            value1: ReciveData.advTitle.toString(),
+                            value2:  ReciveData.toName.toString(),
+                            value3:  ReciveData.toID.toString(),
+                            value4:  ReciveData.advID.toString()
+                            ),
                         );
                       Navigator.of(context).push(route);
-                    },*/
+                    },
                     child: new Card(
                       color: Colors.white,
                       child: new Column(
