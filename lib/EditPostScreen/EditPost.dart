@@ -104,6 +104,9 @@ class EditPostState extends State<EditPost> with SingleTickerProviderStateMixin{
         RecivePost_Time = data[0]["Post_Time"].toString();
         ReciveVisible_To = data[0]["Visible_To"].toString();
         ReciveStatus = data[0]["Publish_Status"].toString();
+        setState(){
+                TitleController.text=ReciveTitle;
+          }
 
            /*print("ReciveJsonAdv_ID"+ReciveJsonAdv_ID.toString());
            print("ReciveJsonCat_ID"+ReciveJsonCat_ID.toString());
